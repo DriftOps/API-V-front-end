@@ -12,7 +12,7 @@ export default function Login() {
         alignItems: "center"
       }}
     >
-      <Image source={require('../assets/images/gswlogo.svg')}></Image>
+      <Image source={require('../../assets/images/gswlogo.png')}></Image>
 
       <View style={{
       }}>
