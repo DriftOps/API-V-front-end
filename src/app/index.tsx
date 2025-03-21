@@ -1,20 +1,18 @@
 import React from "react";
-import { Text, View, Image, TouchableOpacity, TextInput } from "react-native";
-import {NavigationContainer} from '@react-navigation/native';
-
-const gsw = require('../assets/images/gswlogo.png')
+import { Text, View, Image, TouchableOpacity } from "react-native";
+import { TextInput } from "react-native-gesture-handler";
 
 export default function Login() {
   return (
     <View
       style={{
         backgroundColor: "#002963",
-        flex: 1,
+        flex: 2,
         justifyContent: "space-evenly",
         alignItems: "center"
       }}
     >
-      <Image source={gsw}></Image>
+      <Image source={require('../assets/images/gswlogo.svg')}></Image>
 
       <View style={{
       }}>
@@ -71,7 +69,7 @@ export default function Login() {
               fontWeight: "bold", 
             }}
           >
-            Login
+            Efetuar Login
           </Text>
         </TouchableOpacity>
       
