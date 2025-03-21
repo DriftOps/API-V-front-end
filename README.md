@@ -21,7 +21,7 @@ Caso contrário, siga as instruções do React Native CLI.
 No terminal, navegue até a pasta do seu projeto:
 
 ```bash
-cd /caminho/para/seu/projeto
+cd /src
 ```
 
 ## 4. **Instalar as Dependências**
