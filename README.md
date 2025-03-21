@@ -68,7 +68,44 @@ npx react-native run-ios      # Para iOS (Mac com Xcode necessário)
 
 ## 8. **Solução de Problemas**
 
-- Limpe o cache caso encontre erros:
+### **Erro ao Instalar o React Native CLI:**
+
+Se você encontrar o erro ao executar `npm install -g react-native-cli`, relacionado à política de execução do PowerShell, siga estas etapas para resolver:
+
+1. **Alterar a Política de Execução do PowerShell**:
+
+   - Abra o **PowerShell como administrador**.
+   - Verifique a política de execução com:
+
+     ```bash
+     Get-ExecutionPolicy
+     ```
+
+     Caso o retorno seja `Restricted`, altere a política de execução:
+
+     ```bash
+     Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+     ```
+
+   - Confirme com `Y`.
+
+2. **Tente Novamente o Comando**:
+
+   Após alterar a política, tente executar o comando novamente:
+
+   ```bash
+   npm install -g react-native-cli
+   ```
+
+3. **Verifique a Instalação**:
+
+   Verifique se a instalação foi bem-sucedida com:
+
+   ```bash
+   react-native --version
+   ```
+
+- Para outros erros, limpe o cache:
 
 ```bash
 npm cache clean --force
@@ -92,3 +129,5 @@ npm start --reset-cache
 ```
 
 Agora você está pronto para rodar seu projeto React Native no VSCode!
+
+---
