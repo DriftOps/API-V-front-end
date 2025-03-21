@@ -1,6 +1,5 @@
 import React from "react";
-import { Text, View, Image, TouchableOpacity } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { Text, View, Image, TouchableOpacity, TextInput } from "react-native";
 
 export default function Login() {
   return (
@@ -14,8 +13,7 @@ export default function Login() {
     >
       <Image source={require('../../assets/images/gswlogo.png')}></Image>
 
-      <View style={{
-      }}>
+      <View>
 
       <Text 
       style={{
