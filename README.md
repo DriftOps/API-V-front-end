@@ -1,3 +1,26 @@
+4. Verificar as Configurações no Expo
+Se você estiver usando o Expo para rodar o projeto, pode ser necessário também atualizar as variáveis de ambiente no seu terminal para garantir que o Expo e o adb (Android Debug Bridge) reconheçam o novo caminho.
+
+No terminal, execute o seguinte comando para configurar a variável de ambiente ANDROID_HOME:
+
+bash
+Copiar
+export ANDROID_HOME=C:/Android/Sdk
+(Isso é para o terminal no Windows, usando o PowerShell ou o CMD. No Linux/Mac, use export dentro do terminal).
+
+Verifique se o Android SDK está sendo reconhecido:
+
+Execute o comando:
+
+bash
+Copiar
+adb version
+Isso deve mostrar a versão do adb se estiver tudo configurado corretamente.
+
+
+
+
+
 # Projeto API-V Front-End
 
 ## Como rodar o projeto
