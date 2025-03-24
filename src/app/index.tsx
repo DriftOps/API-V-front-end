@@ -1,7 +1,14 @@
 import React from "react";
 import { Text, View, Image, TouchableOpacity, TextInput } from "react-native";
+import { useRouter } from "expo-router";
 
 export default function Login() {
+  const router = useRouter();
+
+  function handleLogin() {
+    router.replace("/(tabs)/home")
+  }
+
   return (
     <View
       style={{
@@ -51,6 +58,7 @@ export default function Login() {
       </View>
 
       <TouchableOpacity
+      onPress={handleLogin}
           style={{
             backgroundColor: "white",
             borderRadius: 30,
