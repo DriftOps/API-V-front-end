@@ -1,3 +1,83 @@
+# Projeto API-V Front-End
+
+## Como rodar o projeto
+
+### Passo 1: Instalar as dependências
+Primeiro, instale todas as dependências necessárias para o projeto:
+
+```bash
+npm install --save-dev @types/react@^19.0.0
+```
+
+### Passo 2: Iniciar o Expo
+Depois de instalar as dependências, você pode iniciar o servidor do Expo com o seguinte comando:
+
+```bash
+npx expo start
+```
+
+### Passo 3: Instalar as dependências principais
+Se as dependências essenciais como TypeScript e os tipos do React não foram instalados previamente, execute o seguinte comando:
+
+```bash
+npm install --save-dev typescript @types/react @types/react-native
+```
+
+### Passo 4: Instalar o Expo CLI globalmente
+Se você não tem o Expo CLI instalado globalmente, pode instalar com o comando:
+
+```bash
+npm install -g expo-cli
+```
+
+### Passo 5: Instalar o React Native e outras dependências
+Instale o React Native e o `react-native-gesture-handler` (caso não tenha sido instalado):
+
+```bash
+npm install react-native react-native-gesture-handler
+```
+
+### Passo 6: Instalar o Expo
+Por fim, instale o pacote do Expo para garantir que o ambiente esteja configurado corretamente:
+
+```bash
+npm install expo
+```
+
+---
+
+## Detalhes adicionais
+
+- Certifique-se de ter o Node.js na versão compatível com o Expo.
+- Caso esteja com problemas de versões conflitantes de dependências, tente usar o `--legacy-peer-deps` no npm.
+
+## Problemas Comuns
+
+Se você encontrar problemas durante a instalação, tente limpar o cache do npm com:
+
+```bash
+npm cache clean --force
+```
+
+Depois disso, tente rodar novamente o comando `npm install`.
+
+---
+
+Siga esses passos para garantir que seu projeto seja configurado corretamente. Caso tenha alguma dúvida ou encontre problemas, sinta-se à vontade para abrir uma *issue*.
+```
+
+### Explicação dos passos:
+
+1. **Instalação de dependências**: Começamos com a instalação do `@types/react@^19.0.0`, que foi mencionado no erro.
+2. **Iniciar Expo**: Depois de instalar as dependências, o próximo passo é iniciar o Expo.
+3. **Instalação de dependências principais**: Caso a instalação de TypeScript e dos tipos do React não tenha sido feita corretamente, executamos o comando para instalá-las.
+4. **Instalação do Expo CLI globalmente**: Se o Expo CLI não estiver instalado globalmente, ele é instalado.
+5. **Instalação do React Native e outras bibliotecas**: Instalamos `react-native` e outras bibliotecas como `react-native-gesture-handler`.
+6. **Instalação do Expo**: A instalação do pacote do Expo é feita por último.
+```
+
+
+
 # Guia de Configuração do Projeto React Native no VSCode
 
 Siga os passos abaixo para rodar seu projeto React Native no VSCode e instalar as dependências necessárias.
