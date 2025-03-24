@@ -18,7 +18,7 @@ export default function Login() {
         alignItems: "center"
       }}
     >
-      <Image source={require('../../assets/images/gswlogo.png')}></Image>
+      <Image source={require('../assets/images/gswlogo.png')}></Image>
 
       <View>
 

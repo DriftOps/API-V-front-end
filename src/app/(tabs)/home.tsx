@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 7,
-    marginBottom: 3,
+    marginBottom: 10,
   },
   totalText: {
     color: "white",
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginVertical: 10,
-    marginBottom: 60,
+    marginBottom: 35,
   },
   card: {
     backgroundColor: "white",
@@ -75,7 +75,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "65%",
     height: "59%",
-    marginBottom: 5,
   },
   option: {
     alignItems: "center",
