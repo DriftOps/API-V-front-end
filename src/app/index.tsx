@@ -1,13 +1,37 @@
 import React from "react";
+import { useState } from "react";
 import { Text, View, Image, TouchableOpacity, TextInput } from "react-native";
 import { useRouter } from "expo-router";
 
 export default function Login() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
 
-  function handleLogin() {
-    router.replace("/(tabs)/home")
-  }
+  const handleLogin = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, senha }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Armazenar o token no AsyncStorage ou estado global, se necessário
+        // Navegar para a tela de home
+        router.replace("/(tabs)/home");
+      } else {
+        alert(data.message);  // Exibir erro se houver
+      }
+    } catch (error) {
+      console.error("Erro no login:", error);
+      alert("Erro ao tentar fazer login. Tente novamente.");
+    }
+  };
 
   return (
     <View
