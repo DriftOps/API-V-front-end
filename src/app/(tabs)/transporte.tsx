@@ -1,10 +1,19 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
 const TransporteScreen = () => {
-  const navigation = useNavigation(); // Obtém a navegação
+  const navigation = useNavigation(); // Para navegação
+  const [form, setForm] = useState({ data: '', valor: '', km: '', estabelecimento: '' });
+
+  const handleChange = (name, value) => {
+    setForm({ ...form, [name]: value });
+  };
+
+  const handleSubmit = () => {
+    Alert.alert("Dados Enviados", `Data: ${form.data}\nValor: ${form.valor}\nKm: ${form.km}\nEstabelecimento: ${form.estabelecimento}`);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -17,19 +26,48 @@ const TransporteScreen = () => {
       
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Data:</Text>
-        <TextInput style={styles.input} placeholder="" placeholderTextColor="#ccc" />
+        <TextInput 
+          style={styles.input} 
+          placeholder="Digite a data" 
+          placeholderTextColor="#ccc" 
+          value={form.data}
+          onChangeText={(text) => handleChange('data', text)}
+        />
         
         <Text style={styles.label}>Valor:</Text>
-        <TextInput style={styles.input} placeholder="" placeholderTextColor="#ccc" keyboardType="numeric" />
+        <TextInput 
+          style={styles.input} 
+          placeholder="Digite o valor" 
+          placeholderTextColor="#ccc" 
+          keyboardType="numeric"
+          value={form.valor}
+          onChangeText={(text) => handleChange('valor', text)}
+        />
         
         <Text style={styles.label}>Km Rodado:</Text>
-        <TextInput style={styles.input} placeholder="" placeholderTextColor="#ccc" keyboardType="numeric" />
+        <TextInput 
+          style={styles.input} 
+          placeholder="Digite os Km rodados" 
+          placeholderTextColor="#ccc" 
+          keyboardType="numeric"
+          value={form.km}
+          onChangeText={(text) => handleChange('km', text)}
+        />
         
         <Text style={styles.label}>Estabelecimento:</Text>
-        <TextInput style={styles.input} placeholder="" placeholderTextColor="#ccc" />
+        <TextInput 
+          style={styles.input} 
+          placeholder="Digite o estabelecimento" 
+          placeholderTextColor="#ccc" 
+          value={form.estabelecimento}
+          onChangeText={(text) => handleChange('estabelecimento', text)}
+        />
       </View>
-      
-      {/* Botão de câmera ajustado */}
+
+      <TouchableOpacity style={styles.sendButton} onPress={handleSubmit}>
+        <Text style={styles.sendButtonText}>Enviar</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles.cameraButton}>
         <Ionicons name="camera" size={32} color="white" />
       </TouchableOpacity>
@@ -69,9 +107,22 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontSize: 16,
   },
+  sendButton: {
+    backgroundColor: '#FFD700',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 10,
+  },
+  sendButtonText: {
+    color: '#00245D',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
   cameraButton: {
     position: 'absolute',
-    bottom: 80, // Alterado de 20 para 80 para subir o botão
+    bottom: 90, 
     backgroundColor: '#FFFFFF',
     width: 70,
     height: 70,
