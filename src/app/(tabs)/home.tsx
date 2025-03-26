@@ -1,7 +1,10 @@
 import React from "react";
 import { Text, View, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Reembolso() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       {/* Título */}
@@ -17,17 +20,26 @@ export default function Reembolso() {
 
       {/* Card de Opções */}
       <View style={styles.card}>
-        <TouchableOpacity style={styles.option}>
+        <TouchableOpacity 
+          style={styles.option} 
+          onPress={() => navigation.navigate("transporte")}
+        >
           <Image source={require("../../assets/images/transport.png")} style={styles.optionIcon} />
           <Text style={styles.optionText}>Transporte</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.option}>
+        <TouchableOpacity 
+          style={styles.option}
+          onPress={() => navigation.navigate("alimentacao")}
+        >
           <Image source={require("../../assets/images/food.png")} style={styles.optionIcon} />
           <Text style={styles.optionText}>Alimentação</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.option}>
+        <TouchableOpacity 
+          style={styles.option}
+          onPress={() => navigation.navigate("Historico")}
+        >
           <Image source={require("../../assets/images/saving.png")} style={styles.optionIcon} />
           <Text style={styles.optionText}>Histórico</Text>
         </TouchableOpacity>
