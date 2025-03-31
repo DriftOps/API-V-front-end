@@ -38,7 +38,7 @@ export default function Reembolso() {
 
         <TouchableOpacity 
           style={styles.option}
-          onPress={() => navigation.navigate("Historico")}
+          onPress={() => navigation.navigate("historico")}
         >
           <Image source={require("../../assets/images/saving.png")} style={styles.optionIcon} />
           <Text style={styles.optionText}>Histórico</Text>

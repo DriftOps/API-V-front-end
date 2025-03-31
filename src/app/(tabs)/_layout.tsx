@@ -1,7 +1,6 @@
-import { Tabs } from 'expo-router';
+ import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
-
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
@@ -13,20 +12,18 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarShowLabel: true,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          android: {
-            position: 'absolute',
+        tabBarShowLabel: false,
+         headerShown: false,
+        /* tabBarButton: HapticTab,
+        tabBarBackground: TabBarBackground, */
+        tabBarStyle: {
+            display: "none",
+            /*position: 'absolute',
             backgroundColor: 'white',
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
-            height: 55,
+            height: 55 */
           },
-          default: {},
-        }),
       }}>
 
       <Tabs.Screen
@@ -40,22 +37,7 @@ export default function TabLayout() {
         }}
       />
 
-      <Tabs.Screen
-        name="reembolso"
-        options={{
-          title: 'Reembolso',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="add.fill" color={color} />,
-        }}
-      />
-
-      <Tabs.Screen
-        name="historico"
-        options={{
-          title: 'Histórico',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
-        }}
-      />
-
     </Tabs>
   );
 }
+
