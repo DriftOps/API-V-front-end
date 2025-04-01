@@ -68,9 +68,9 @@ const TransporteScreen = () => {
         <Text style={styles.sendButtonText}>Enviar</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.cameraButton}>
+       <TouchableOpacity style={styles.cameraButton}>
         <Ionicons name="camera" size={32} color="white" />
-      </TouchableOpacity>
+      </TouchableOpacity> 
     </SafeAreaView>
   );
 };
@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   cameraButton: {
+    display: 'none',
     position: 'absolute',
     bottom: 90, 
     backgroundColor: '#FFFFFF',

@@ -1,12 +1,17 @@
 import React from "react";
 import { Text, View, Image, TouchableOpacity, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons"; // Importe o Ionicons para ícones
 
 export default function Reembolso() {
-  const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
+      {/* Botão de Logout no canto superior esquerdo com ícone */}
+      <TouchableOpacity style={styles.logoutButton} 
+      onPress={() => navigation.navigate("/")}>
+        <Ionicons name="log-out-outline" size={30} color="white" />
+      </TouchableOpacity>
+
       {/* Título */}
       <Text style={styles.title}>Reembolso</Text>
 
@@ -102,5 +107,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 5,
   },
+  logoutButton: {
+    position: "absolute",
+    top: 20,
+    left: 20,
+    backgroundColor: "#34bdeb", // Cor do botão (vermelho)
+    padding: 10,
+    borderRadius: 50, // Tornar o botão redondo
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
-

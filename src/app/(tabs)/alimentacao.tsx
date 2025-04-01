@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   cameraButton: {
+    display: 'none',
     position: 'absolute',
     bottom: 90, 
     backgroundColor: '#FFFFFF',
