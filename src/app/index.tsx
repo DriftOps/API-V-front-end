@@ -4,6 +4,7 @@ import { Text, View, Image, TouchableOpacity, TextInput } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -90,7 +91,7 @@ export default function Login() {
       </View>
 
       <TouchableOpacity
-      onPress={handleLogin}
+      onPress={() => router.replace("/(tabs)/home")}
           style={{
             backgroundColor: "white",
             borderRadius: 30,

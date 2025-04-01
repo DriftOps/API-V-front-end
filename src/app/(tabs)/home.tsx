@@ -1,14 +1,17 @@
 import React from "react";
 import { Text, View, Image, TouchableOpacity, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons"; // Importe o Ionicons para ícones
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function Reembolso() {
+
+    const router = useRouter();
 
   return (
     <View style={styles.container}>
       {/* Botão de Logout no canto superior esquerdo com ícone */}
       <TouchableOpacity style={styles.logoutButton} 
-      onPress={() => navigation.navigate("/")}>
+      onPress={() => router.replace("/")}>
         <Ionicons name="log-out-outline" size={30} color="white" />
       </TouchableOpacity>
 
@@ -27,7 +30,7 @@ export default function Reembolso() {
       <View style={styles.card}>
         <TouchableOpacity 
           style={styles.option} 
-          onPress={() => navigation.navigate("transporte")}
+          onPress={() => router.replace("/(tabs)/transporte")}
         >
           <Image source={require("../../assets/images/transport.png")} style={styles.optionIcon} />
           <Text style={styles.optionText}>Transporte</Text>
@@ -35,7 +38,7 @@ export default function Reembolso() {
 
         <TouchableOpacity 
           style={styles.option}
-          onPress={() => navigation.navigate("alimentacao")}
+          onPress={() => router.replace("/(tabs)/alimentacao")}
         >
           <Image source={require("../../assets/images/food.png")} style={styles.optionIcon} />
           <Text style={styles.optionText}>Alimentação</Text>
@@ -43,7 +46,7 @@ export default function Reembolso() {
 
         <TouchableOpacity 
           style={styles.option}
-          onPress={() => navigation.navigate("historico")}
+          onPress={() => router.replace("/(tabs)/historico")}
         >
           <Image source={require("../../assets/images/saving.png")} style={styles.optionIcon} />
           <Text style={styles.optionText}>Histórico</Text>
