@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { Text, View, Image, TouchableOpacity, TextInput } from "react-native";
 import { useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Login() {
   const router = useRouter();
@@ -10,22 +11,21 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth', {
+      const response = await fetch('http://10.0.2.2:5000/api/auth/login', {  // No PC, use localhost:5000, no emulador, 10.0.2.2:5000
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, senha }),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
-        // Armazenar o token no AsyncStorage ou estado global, se necessário
-        // Navegar para a tela de home
+        await AsyncStorage.setItem('token', data.token);
         router.replace("/(tabs)/home");
       } else {
-        alert(data.message);  // Exibir erro se houver
+        alert(data.message);
       }
     } catch (error) {
       console.error("Erro no login:", error);
@@ -60,7 +60,10 @@ export default function Login() {
         borderRadius: 30,
         height: 50,
         width: 250
-      }}></TextInput>
+      }}
+      value={email}
+      onChangeText={(text) => setEmail(text)}>
+      </TextInput>
       </View>
 
       <View>
@@ -72,13 +75,18 @@ export default function Login() {
         marginBottom: 10
       }}>Senha:</Text>
 
-      <TextInput    
+      <TextInput
+      secureTextEntry={true}    
       style={{
         backgroundColor: "white",
         borderRadius: 30,
         height: 50,
         width: 250
-      }}></TextInput>
+      }}
+      value={senha}
+      onChangeText={(text) =>setSenha(text)}>
+
+      </TextInput>
       </View>
 
       <TouchableOpacity
