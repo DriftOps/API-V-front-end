@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const expenses = [
   { id: '1', category: 'Jantar', date: '18:27 - Abril 30', amount: '+R$25,00', icon: 'restaurant' },
@@ -11,18 +12,28 @@ const expenses = [
 ];
 
 const ExpenseScreen = () => {
+  const navigation = useNavigation();
+
   return (
     <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
+      {/* Botão de Voltar */}
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={24} color="white" />
+      </TouchableOpacity>
+      
+      {/* Cabeçalho */}
       <View style={{ backgroundColor: '#002f6c', padding: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>Histórico</Text>
+        <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold', marginLeft: 50, marginTop: 10  }}>Histórico</Text>
         <Ionicons name="settings" size={24} color="#fff" />
       </View>
       
+      {/* Total Gasto */}
       <View style={{ backgroundColor: '#004aad', padding: 20, alignItems: 'center' }}>
         <Text style={{ color: '#fff', fontSize: 20 }}>Total Gasto</Text>
         <Text style={{ color: 'white', fontSize: 30, fontWeight: 'bold' }}>R$7.783,00</Text>
       </View>
       
+      {/* Lista de Despesas */}
       <FlatList
         data={expenses}
         keyExtractor={(item) => item.id}
@@ -38,11 +49,24 @@ const ExpenseScreen = () => {
         )}
       />
       
+      {/* Botão de Adicionar Despesa */}
       <TouchableOpacity style={{ backgroundColor: '#00a86b', padding: 15, borderRadius: 10, alignItems: 'center', margin: 20 }}>
         <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Adicionar Despesa</Text>
       </TouchableOpacity>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  backButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    backgroundColor: '#002f6c',
+    padding: 10,
+    borderRadius: 50,
+    zIndex: 10,
+  },
+});
 
 export default ExpenseScreen;
