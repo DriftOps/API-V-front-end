@@ -7,12 +7,12 @@ const ProfileScreen = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Perfil</Text>
-        <Image source={{ uri: "https://your-logo-url.com/logo.png" }} style={styles.logo} />
+        <Image source={require('../../assets/images/gswlogo.png')} style={styles.logo} ></Image>
       </View>
       
       <View style={styles.profileContainer}>
         <View style={styles.avatar}>
-          <Ionicons name="person-circle-outline" size={80} color="#000" />
+          <Ionicons name="person-circle-outline" size={200} color="#000" />
         </View>
         
         <Text style={styles.label}>Nome</Text>
@@ -45,15 +45,15 @@ const ProfileScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F4FFF6", alignItems: "center" },
-  header: { backgroundColor: "#002D62", width: "100%", height: 100, alignItems: "center", justifyContent: "center" },
-  title: { color: "#FFF", fontSize: 18, fontWeight: "bold" },
-  logo: { width: 80, height: 30, position: "absolute", top: 10, right: 10 },
-  profileContainer: { alignItems: "center", marginTop: -30, backgroundColor: "#E8F6EF", width: "90%", borderRadius: 10, padding: 20 },
-  avatar: { marginBottom: 10 },
-  label: { fontSize: 14, fontWeight: "bold", color: "#333" },
-  infoBox: { backgroundColor: "#002D62", borderRadius: 10, padding: 10, marginTop: 5 },
-  infoText: { color: "#FFF", fontSize: 14 },
+  container: { flex: 1, backgroundColor: "#F4FFF6", alignItems: "center", borderTopLeftRadius: 300, borderTopRightRadius: 300 },
+  header: { backgroundColor: "#002D62", width: "100%", height: 200, alignItems: "center", justifyContent: "center" },
+  title: { color: "#FFF", fontSize: 18, fontWeight: "bold", top: -20 },
+  logo: { position: "absolute", top: 105 },
+  profileContainer: {marginTop: 50, width: "90%", borderRadius: 10, padding: 20 },
+  avatar: { marginBottom: 10, alignItems: "center" },
+  label: { fontSize: 18, fontWeight: "bold", color: "#333"},
+  infoBox: { backgroundColor: "#002D62", borderRadius: 10, padding: 15, marginTop: 5 },
+  infoText: { color: "#FFF", fontSize: 20 },
   reembolsoLabel: { marginTop: 20, fontSize: 14, color: "#333" },
   reembolsoValor: { fontSize: 20, fontWeight: "bold", color: "#002D62" },
   footer: { flexDirection: "row", justifyContent: "space-around", width: "100%", position: "absolute", bottom: 20 }
