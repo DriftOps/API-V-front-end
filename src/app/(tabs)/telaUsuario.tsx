@@ -12,7 +12,7 @@ const ProfileScreen = () => {
       
       <View style={styles.profileContainer}>
         <View style={styles.avatar}>
-          <Ionicons name="person-circle-outline" size={200} color="#000" />
+          <Ionicons name="person-circle-outline" size={200} color="#002D62" />
         </View>
         
         <Text style={styles.label}>Nome</Text>
@@ -40,23 +40,27 @@ const ProfileScreen = () => {
           <Ionicons name="person" size={30} color="#002D62" />
         </TouchableOpacity>
       </View>
+
     </View>
+    
+
+    
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F4FFF6", alignItems: "center", borderTopLeftRadius: 300, borderTopRightRadius: 300 },
-  header: { backgroundColor: "#002D62", width: "100%", height: 200, alignItems: "center", justifyContent: "center" },
-  title: { color: "#FFF", fontSize: 18, fontWeight: "bold", top: -20 },
-  logo: { position: "absolute", top: 105 },
-  profileContainer: {marginTop: 50, width: "90%", borderRadius: 10, padding: 20 },
+  container: { flex: 1, backgroundColor: "#F4FFF6", alignItems: "center" },
+  header: { backgroundColor: "#002D62", width: "100%", height: 150, alignItems: "center", justifyContent: "center" },
+  title: { color: "#FFF", fontSize: 18, fontWeight: "bold", top: -20,  },
+  logo: {  },
+  profileContainer: {marginTop: 10, width: "90%", padding: 20 },
   avatar: { marginBottom: 10, alignItems: "center" },
   label: { fontSize: 18, fontWeight: "bold", color: "#333"},
-  infoBox: { backgroundColor: "#002D62", borderRadius: 10, padding: 15, marginTop: 5 },
-  infoText: { color: "#FFF", fontSize: 20 },
-  reembolsoLabel: { marginTop: 20, fontSize: 14, color: "#333" },
-  reembolsoValor: { fontSize: 20, fontWeight: "bold", color: "#002D62" },
-  footer: { flexDirection: "row", justifyContent: "space-around", width: "100%", position: "absolute", bottom: 20 }
+  infoBox: { backgroundColor: "#002D62", borderRadius: 30, padding: 15, marginTop: 9, alignItems: "center" },
+  infoText: { color: "#FFF", fontSize: 20, alignItems: "center" },
+  reembolsoLabel: { marginTop: 50, fontSize: 14,fontWeight: "bold", color: "#333", textAlign: "center" },
+  reembolsoValor: { fontSize: 20, fontWeight: "bold", color: "#002D62", textAlign: "center" },
+  footer: { flexDirection: "row", borderTopWidth: 5, borderTopColor: "#002D62" , padding: 15 , justifyContent: "space-around", width: "100%", position: "absolute", bottom: 20 }
 });
 
 export default ProfileScreen;
