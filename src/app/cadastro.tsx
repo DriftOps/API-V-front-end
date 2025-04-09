@@ -45,7 +45,7 @@ export default function Login() {
     >
 
       <Image source={require('../assets/images/gswlogo.png')}></Image>
-      <Text style={{ color: "#FFF", fontSize: 18, fontWeight: "bold", top: -50}}>Perfil</Text>
+      <Text style={{ color: "#FFF", fontSize: 18, fontWeight: "bold", top: -50}}>Cadastre-se</Text>
 
       <View>
 
@@ -110,7 +110,7 @@ export default function Login() {
               fontWeight: "bold", 
             }}
           >
-            Efetuar Login
+            Efetuar Cadastro
           </Text>
         </TouchableOpacity>
       
