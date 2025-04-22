@@ -20,6 +20,7 @@ Certifique-se de ter as seguintes ferramentas instaladas:
     ```
 
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+
 Get-ExecutionPolicy -List
 
 
