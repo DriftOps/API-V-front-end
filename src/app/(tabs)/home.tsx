@@ -28,29 +28,21 @@ export default function Reembolso() {
 
       {/* Card de Opções */}
       <View style={styles.card}>
-        <TouchableOpacity 
-          style={styles.option} 
-          onPress={() => router.replace("/(tabs)/transporte")}
-        >
-          <Image source={require("../../assets/images/transport.png")} style={styles.optionIcon} />
-          <Text style={styles.optionText}>Transporte</Text>
-        </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.option}
+        onPress={() => router.replace("/(tabs)/transporte")}
+      >
+        <Image source={require("../../assets/images/transport.png")} style={styles.optionIcon} />
+        <Text style={styles.optionText}>Solicitar reembolso</Text>
+      </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={styles.option}
-          onPress={() => router.replace("/(tabs)/alimentacao")}
-        >
-          <Image source={require("../../assets/images/food.png")} style={styles.optionIcon} />
-          <Text style={styles.optionText}>Alimentação</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={styles.option}
-          onPress={() => router.replace("/(tabs)/historico")}
-        >
-          <Image source={require("../../assets/images/saving.png")} style={styles.optionIcon} />
-          <Text style={styles.optionText}>Histórico</Text>
-        </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.option}
+        onPress={() => router.replace("/(tabs)/historico")}
+      >
+        <Image source={require("../../assets/images/saving.png")} style={styles.optionIcon} />
+        <Text style={styles.optionText}>Histórico</Text>
+      </TouchableOpacity>
       </View>
     </View>
   );
@@ -114,9 +106,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 20,
     left: 20,
-    backgroundColor: "#34bdeb", // Cor do botão (vermelho)
+    backgroundColor: "#34bdeb", 
     padding: 10,
-    borderRadius: 50, // Tornar o botão redondo
+    borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
   },

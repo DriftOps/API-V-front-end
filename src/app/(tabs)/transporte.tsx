@@ -1,76 +1,156 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  Alert,
+  Platform,
+  FlatList
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const TransporteScreen = () => {
-  const navigation = useNavigation(); // Para navegação
+  const navigation = useNavigation();
+
   const [form, setForm] = useState({ data: '', valor: '', km: '', estabelecimento: '' });
+  const [reembolsos, setReembolsos] = useState([]);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleChange = (name, value) => {
     setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = () => {
-    Alert.alert("Dados Enviados", `Data: ${form.data}\nValor: ${form.valor}\nKm: ${form.km}\nEstabelecimento: ${form.estabelecimento}`);
+  const showDate = () => setShowDatePicker(true);
+
+  const onChangeDate = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      const formatted = selectedDate.toLocaleDateString('pt-BR');
+      handleChange('data', formatted);
+    }
   };
+
+  const formatCurrency = (text) => {
+    const cleaned = text.replace(/\D/g, '');
+    const numericValue = (parseInt(cleaned || '0', 10) / 100).toFixed(2);
+    return numericValue.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  };
+
+  const handleCurrencyChange = (text) => {
+    const masked = formatCurrency(text);
+    handleChange('valor', masked);
+  };
+
+  const handleAddToPacote = () => {
+    if (!form.data || !form.valor || !form.km || !form.estabelecimento) {
+      Alert.alert("Erro", "Preencha todos os campos.");
+      return;
+    }
+
+    setReembolsos([...reembolsos, form]);
+    setForm({ data: '', valor: '', km: '', estabelecimento: '' });
+  };
+
+  const handleEnviarPacote = () => {
+    if (reembolsos.length === 0) {
+      Alert.alert("Pacote vazio", "Adicione pelo menos um reembolso.");
+      return;
+    }
+
+    Alert.alert("Pacote Enviado", JSON.stringify(reembolsos, null, 2));
+    setReembolsos([]);
+  };
+
+  const renderReembolso = ({ item, index }) => (
+    <View key={index} style={styles.previewItem}>
+      <Text style={styles.previewText}>#{index + 1} • {item.data} • R${item.valor} • {item.km}km • {item.estabelecimento}</Text>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Botão de voltar */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
-      
-      <Text style={styles.title}>Transporte</Text>
-      
+
+      <Text style={styles.title}>Reembolso</Text>
+
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Data:</Text>
-        <TextInput 
-          style={styles.input} 
-          placeholder="Digite a data" 
-          placeholderTextColor="#ccc" 
-          value={form.data}
-          onChangeText={(text) => handleChange('data', text)}
-        />
-        
+        <TouchableOpacity style={styles.input} onPress={showDate}>
+          <Text style={{ color: form.data ? '#000' : '#ccc', fontSize: 16 }}>
+            {form.data || 'Selecionar data'}
+          </Text>
+        </TouchableOpacity>
+
+        {showDatePicker && (
+          <DateTimePicker
+            value={new Date()}
+            mode="date"
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={onChangeDate}
+            locale="pt-BR"
+          />
+        )}
+
         <Text style={styles.label}>Valor:</Text>
-        <TextInput 
-          style={styles.input} 
-          placeholder="Digite o valor" 
-          placeholderTextColor="#ccc" 
+        <TextInput
+          style={styles.input}
+          placeholder="Digite o valor"
+          placeholderTextColor="#ccc"
           keyboardType="numeric"
           value={form.valor}
-          onChangeText={(text) => handleChange('valor', text)}
+          onChangeText={handleCurrencyChange}
         />
-        
-        <Text style={styles.label}>Km Rodado:</Text>
-        <TextInput 
-          style={styles.input} 
-          placeholder="Digite os Km rodados" 
-          placeholderTextColor="#ccc" 
+
+        <Text style={styles.label}>Km Rodado (se aplicável):</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Digite os Km rodados"
+          placeholderTextColor="#ccc"
           keyboardType="numeric"
           value={form.km}
           onChangeText={(text) => handleChange('km', text)}
         />
-        
+
         <Text style={styles.label}>Estabelecimento:</Text>
-        <TextInput 
-          style={styles.input} 
-          placeholder="Digite o estabelecimento" 
-          placeholderTextColor="#ccc" 
+        <TextInput
+          style={styles.input}
+          placeholder="Digite o estabelecimento"
+          placeholderTextColor="#ccc"
           value={form.estabelecimento}
           onChangeText={(text) => handleChange('estabelecimento', text)}
         />
       </View>
 
-      <TouchableOpacity style={styles.sendButton} onPress={handleSubmit}>
-        <Text style={styles.sendButtonText}>Enviar</Text>
+      <TouchableOpacity style={styles.sendButton} onPress={handleAddToPacote}>
+        <Text style={styles.sendButtonText}>Adicionar ao Pacote</Text>
       </TouchableOpacity>
 
-       <TouchableOpacity style={styles.cameraButton}>
+      {reembolsos.length > 0 && (
+        <>
+          <Text style={[styles.label, { marginTop: 20 }]}>Reembolsos:</Text>
+          <FlatList
+            data={reembolsos}
+            renderItem={renderReembolso}
+            keyExtractor={(_, index) => index.toString()}
+            style={{ width: '100%', marginBottom: 15 }}
+          />
+
+          <TouchableOpacity style={[styles.sendButton, { backgroundColor: '#00C851' }]} onPress={handleEnviarPacote}>
+            <Text style={[styles.sendButtonText, { color: 'white' }]}>Enviar</Text>
+          </TouchableOpacity>
+        </>
+      )}
+
+      <TouchableOpacity style={styles.cameraButton}>
         <Ionicons name="camera" size={32} color="white" />
-      </TouchableOpacity> 
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -123,7 +203,7 @@ const styles = StyleSheet.create({
   cameraButton: {
     display: 'none',
     position: 'absolute',
-    bottom: 90, 
+    bottom: 90,
     backgroundColor: '#FFFFFF',
     width: 70,
     height: 70,
@@ -135,6 +215,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  previewItem: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 8,
+  },
+  previewText: {
+    fontSize: 14,
+    color: '#333',
   },
 });
 

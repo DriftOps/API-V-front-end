@@ -48,11 +48,6 @@ const ExpenseScreen = () => {
           </View>
         )}
       />
-      
-      {/* Botão de Adicionar Despesa */}
-      <TouchableOpacity style={{ backgroundColor: '#00a86b', padding: 15, borderRadius: 10, alignItems: 'center', margin: 20 }}>
-        <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Adicionar Despesa</Text>
-      </TouchableOpacity>
     </View>
   );
 };
