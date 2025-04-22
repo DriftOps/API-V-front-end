@@ -1,14 +1,37 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  Alert,
+  Platform,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import MaskInput, { Masks } from 'react-native-mask-input';
 
 const TransporteScreen = () => {
   const navigation = useNavigation(); // Para navegação
   const [form, setForm] = useState({ data: '', valor: '', km: '', estabelecimento: '' });
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleChange = (name, value) => {
     setForm({ ...form, [name]: value });
+  };
+
+  const handleDateChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      const day = String(selectedDate.getDate()).padStart(2, '0');
+      const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+      const year = selectedDate.getFullYear();
+      const formatted = `${day}/${month}/${year}`;
+      setForm({ ...form, data: formatted });
+    }
   };
 
   const handleSubmit = () => {
@@ -26,39 +49,56 @@ const TransporteScreen = () => {
       
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Data:</Text>
-        <TextInput 
-          style={styles.input} 
-          placeholder="Digite a data" 
-          placeholderTextColor="#ccc" 
-          value={form.data}
-          onChangeText={(text) => handleChange('data', text)}
-        />
         
+        <View style={styles.inputWrapper}>
+          <MaskInput
+            style={[styles.input, { paddingRight: 40 }]}
+            placeholder="DD/MM/AAAA"
+            placeholderTextColor="#ccc"
+            value={form.data}
+            onChangeText={(masked) => handleChange('data', masked)}
+            mask={Masks.DATE_DDMMYYYY}
+            keyboardType="numeric"
+          />
+          <TouchableOpacity style={styles.iconOverlay} onPress={() => setShowDatePicker(true)}>
+            <Ionicons name="calendar-outline" size={22} color="#00245D" />
+          </TouchableOpacity>
+        </View>
+
+        {showDatePicker && (
+          <DateTimePicker
+            value={new Date()}
+            mode="date"
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={handleDateChange}
+          />
+        )}
+
         <Text style={styles.label}>Valor:</Text>
-        <TextInput 
-          style={styles.input} 
-          placeholder="Digite o valor" 
-          placeholderTextColor="#ccc" 
+        <TextInput
+          style={styles.input}
+          placeholder="Digite o valor"
+          placeholderTextColor="#ccc"
           keyboardType="numeric"
           value={form.valor}
           onChangeText={(text) => handleChange('valor', text)}
         />
         
         <Text style={styles.label}>Km Rodado:</Text>
-        <TextInput 
-          style={styles.input} 
-          placeholder="Digite os Km rodados" 
-          placeholderTextColor="#ccc" 
+        <TextInput
+          style={styles.input}
+          placeholder="Digite os Km rodados"
+          placeholderTextColor="#ccc"
           keyboardType="numeric"
           value={form.km}
           onChangeText={(text) => handleChange('km', text)}
         />
         
         <Text style={styles.label}>Estabelecimento:</Text>
-        <TextInput 
-          style={styles.input} 
-          placeholder="Digite o estabelecimento" 
-          placeholderTextColor="#ccc" 
+        <TextInput
+          style={styles.input}
+          placeholder="Digite o estabelecimento"
+          placeholderTextColor="#ccc"
           value={form.estabelecimento}
           onChangeText={(text) => handleChange('estabelecimento', text)}
         />
@@ -68,9 +108,10 @@ const TransporteScreen = () => {
         <Text style={styles.sendButtonText}>Enviar</Text>
       </TouchableOpacity>
 
-       <TouchableOpacity style={styles.cameraButton}>
+      {/* Camera Button */}
+      <TouchableOpacity style={styles.cameraButton}>
         <Ionicons name="camera" size={32} color="white" />
-      </TouchableOpacity> 
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -84,7 +125,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     alignSelf: 'flex-start',
-    marginBottom: 20
+    marginBottom: 20,
   },
   title: {
     fontSize: 20,
@@ -107,6 +148,15 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontSize: 16,
   },
+  inputWrapper: {
+    position: 'relative',
+    justifyContent: 'center',
+  },
+  iconOverlay: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
+  },
   sendButton: {
     backgroundColor: '#FFD700',
     padding: 15,
@@ -123,7 +173,7 @@ const styles = StyleSheet.create({
   cameraButton: {
     display: 'none',
     position: 'absolute',
-    bottom: 90, 
+    bottom: 90,
     backgroundColor: '#FFFFFF',
     width: 70,
     height: 70,

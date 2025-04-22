@@ -4,14 +4,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
 export default function Reembolso() {
-
-    const router = useRouter();
+  const router = useRouter();
 
   return (
     <View style={styles.container}>
-      {/* Botão de Logout no canto superior esquerdo com ícone */}
-      <TouchableOpacity style={styles.logoutButton} 
-      onPress={() => router.replace("/")}>
+      {/* Botão de Logout */}
+      <TouchableOpacity
+        style={styles.logoutButton}
+        onPress={() => router.replace("/")}
+      >
         <Ionicons name="log-out-outline" size={30} color="white" />
       </TouchableOpacity>
 
@@ -28,27 +29,52 @@ export default function Reembolso() {
 
       {/* Card de Opções */}
       <View style={styles.card}>
-        <TouchableOpacity 
-          style={styles.option} 
+
+        {/* Pacote de Viagem - Nova Primeira Opção */}
+        <TouchableOpacity
+          style={styles.option}
+          onPress={() => router.replace("/(tabs)/pacoteviagem")}
+        >
+          <Image
+            source={require("../../assets/images/travel.png")}
+            style={styles.optionIcon}
+          />
+          <Text style={styles.optionText}>Pacote Viagem</Text>
+        </TouchableOpacity>
+
+        {/* Transporte */}
+        <TouchableOpacity
+          style={styles.option}
           onPress={() => router.replace("/(tabs)/transporte")}
         >
-          <Image source={require("../../assets/images/transport.png")} style={styles.optionIcon} />
+          <Image
+            source={require("../../assets/images/transport.png")}
+            style={styles.optionIcon}
+          />
           <Text style={styles.optionText}>Transporte</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
+        {/* Alimentação */}
+        <TouchableOpacity
           style={styles.option}
           onPress={() => router.replace("/(tabs)/alimentacao")}
         >
-          <Image source={require("../../assets/images/food.png")} style={styles.optionIcon} />
+          <Image
+            source={require("../../assets/images/food.png")}
+            style={styles.optionIcon}
+          />
           <Text style={styles.optionText}>Alimentação</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
+        {/* Histórico */}
+        <TouchableOpacity
           style={styles.option}
           onPress={() => router.replace("/(tabs)/historico")}
         >
-          <Image source={require("../../assets/images/saving.png")} style={styles.optionIcon} />
+          <Image
+            source={require("../../assets/images/saving.png")}
+            style={styles.optionIcon}
+          />
           <Text style={styles.optionText}>Histórico</Text>
         </TouchableOpacity>
       </View>
@@ -94,7 +120,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "65%",
-    height: "59%",
+    height: "65%",
   },
   option: {
     alignItems: "center",
@@ -114,9 +140,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 20,
     left: 20,
-    backgroundColor: "#34bdeb", // Cor do botão (vermelho)
+    backgroundColor: "#34bdeb",
     padding: 10,
-    borderRadius: 50, // Tornar o botão redondo
+    borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
   },
