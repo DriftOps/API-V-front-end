@@ -45,7 +45,6 @@ export default function Login() {
     >
 
       <Image source={require('../assets/images/gswlogo.png')}></Image>
-      <Text style={{ color: "#FFF", fontSize: 18, fontWeight: "bold", top: -50}}>Perfil</Text>
 
       <View>
 

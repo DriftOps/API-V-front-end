@@ -11,7 +11,7 @@ const expenses = [
   { id: '5', category: 'Jantar', date: '20:50 - Março 31', amount: '+R$27,20', icon: 'restaurant' },
 ];
 
-const ExpenseScreen = () => {
+const TelaHistorico = () => {
   const navigation = useNavigation();
 
   return (
@@ -48,11 +48,6 @@ const ExpenseScreen = () => {
           </View>
         )}
       />
-      
-      {/* Botão de Adicionar Despesa */}
-      <TouchableOpacity style={{ backgroundColor: '#00a86b', padding: 15, borderRadius: 10, alignItems: 'center', margin: 20 }}>
-        <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>Adicionar Despesa</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -69,4 +64,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ExpenseScreen;
+export default TelaHistorico;

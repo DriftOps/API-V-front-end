@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-const ProfileScreen = () => {
+const TelaPerfil = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -63,4 +63,4 @@ const styles = StyleSheet.create({
   footer: { flexDirection: "row", borderTopWidth: 5, borderTopColor: "#002D62" , padding: 15 , justifyContent: "space-around", width: "100%", position: "absolute", bottom: 20 }
 });
 
-export default ProfileScreen;
+export default TelaPerfil;

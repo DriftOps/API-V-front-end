@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
-export default function Login() {
+export default function Cadastro() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -110,7 +110,7 @@ export default function Login() {
               fontWeight: "bold", 
             }}
           >
-            Efetuar Cadastro
+            Cadastrar-se
           </Text>
         </TouchableOpacity>
       
