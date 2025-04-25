@@ -11,6 +11,7 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
+      
       {/* Botão de Logout no canto superior esquerdo com ícone */}
       <TouchableOpacity style={styles.logoutButton} 
       onPress={() => router.replace("/")}>
@@ -19,6 +20,8 @@ export default function Home() {
 
       {/* Título */}
       <Text style={styles.title}>Reembolso</Text>
+
+      <Image source={require('../../assets/images/gswlogo.png')} ></Image>
 
       {/* Total Gasto */}
       <View style={styles.totalContainer}>
@@ -64,12 +67,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 30,
+    marginTop: -90
   },
   totalContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 7,
     marginBottom: 10,
+    marginTop: 40
   },
   totalText: {
     color: "white",
@@ -88,8 +93,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    width: "65%",
-    height: "59%",
+    width: "60%",
+    height: "45%",
   },
   option: {
     alignItems: "center",

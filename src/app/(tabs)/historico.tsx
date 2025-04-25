@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import Navtab from '@/components/Navtab';
+
 
 const expenses = [
   { id: '1', category: 'Jantar', date: '18:27 - Abril 30', amount: '+R$25,00', icon: 'restaurant' },
@@ -48,7 +50,9 @@ const TelaHistorico = () => {
           </View>
         )}
       />
+      <Navtab />
     </View>
+    
   );
 };
 

@@ -13,6 +13,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Navtab from '@/components/Navtab';
+
 
 const TelaReembolso = () => {
   const navigation = useNavigation();
@@ -79,8 +81,7 @@ const TelaReembolso = () => {
       </TouchableOpacity>
 
       <Text style={styles.title}>Reembolso</Text>
-
-      <View style={styles.inputContainer}>
+     <View style={styles.inputContainer}>
         <Text style={styles.label}>Data:</Text>
         <TouchableOpacity style={styles.input} onPress={showDate}>
           <Text style={{ color: form.data ? '#000' : '#ccc', fontSize: 16 }}>
@@ -126,11 +127,12 @@ const TelaReembolso = () => {
           value={form.estabelecimento}
           onChangeText={(text) => handleChange('estabelecimento', text)}
         />
-      </View>
-
-      <TouchableOpacity style={styles.sendButton} onPress={handleAddToPacote}>
+        <TouchableOpacity style={styles.sendButton} onPress={handleAddToPacote}>
         <Text style={styles.sendButtonText}>Adicionar ao Pacote</Text>
       </TouchableOpacity>
+      </View>
+      <Navtab />
+     
 
       {reembolsos.length > 0 && (
         <>
@@ -152,7 +154,9 @@ const TelaReembolso = () => {
         <Ionicons name="camera" size={32} color="white" />
       </TouchableOpacity>
     </SafeAreaView>
+    
   );
+  
 };
 
 const styles = StyleSheet.create({
@@ -173,7 +177,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   inputContainer: {
-    width: '100%',
+    width: '80%',
   },
   label: {
     color: 'white',
