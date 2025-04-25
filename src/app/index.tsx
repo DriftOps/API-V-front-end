@@ -7,32 +7,38 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Login() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [user, setUser] = useState("");
   const [senha, setSenha] = useState("");
 
   const handleLogin = async () => {
+    if (!user || !senha) {
+      alert("Preencha todos os campos");
+      return;
+    }
+  
     try {
-      const response = await fetch('http://10.0.2.2:5000/api/auth/login', {  // No PC, use localhost:5000, no emulador, 10.0.2.2:5000
+      const response = await fetch('http://10.0.2.2:5000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, senha }),
+        body: JSON.stringify({ user, password: senha }),
       });
   
       const data = await response.json();
   
       if (response.ok) {
-        await AsyncStorage.setItem('token', data.token);
+        await AsyncStorage.setItem('token', data.body.token);
         router.replace("/(tabs)/home");
       } else {
-        alert(data.message);
+        alert(data.body.text || "Erro ao fazer login");
       }
     } catch (error) {
       console.error("Erro no login:", error);
       alert("Erro ao tentar fazer login. Tente novamente.");
     }
   };
+  
 
   return (
     <View
@@ -63,8 +69,8 @@ export default function Login() {
         height: 50,
         width: 250
       }}
-      value={email}
-      onChangeText={(text) => setEmail(text)}>
+      value={user}
+      onChangeText={(text) => setUser(text)}>
       </TextInput>
       </View>
 
@@ -92,7 +98,7 @@ export default function Login() {
       </View>
 
       <TouchableOpacity
-      onPress={() => router.replace("/(tabs)/home")}
+      onPress={handleLogin}
           style={{
             backgroundColor: "white",
             borderRadius: 30,
