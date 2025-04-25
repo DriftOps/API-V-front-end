@@ -1,6 +1,8 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import Navtab from '@/components/Navtab';
+
 
 const TelaPerfil = () => {
   return (
@@ -29,17 +31,10 @@ const TelaPerfil = () => {
         <Text style={styles.reembolsoValor}>R$1.893,00</Text>
       </View>
 
-      <View style={styles.footer}>
-        <TouchableOpacity>
-          <Ionicons name="home" size={30} color="#002D62" />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="add-circle" size={30} color="#002D62" />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="person" size={30} color="#002D62" />
-        </TouchableOpacity>
-      </View>
+     
+      <Navtab />
+    
+
 
     </View>
     

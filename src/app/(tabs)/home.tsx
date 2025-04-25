@@ -2,6 +2,8 @@ import React from "react";
 import { Text, View, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import Navtab from '@/components/Navtab';
+
 
 export default function Home() {
 
@@ -44,6 +46,7 @@ export default function Home() {
         <Text style={styles.optionText}>Histórico</Text>
       </TouchableOpacity>
       </View>
+      <Navtab />
     </View>
   );
 }
