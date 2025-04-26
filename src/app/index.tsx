@@ -98,7 +98,7 @@ export default function Login() {
       </View>
 
       <TouchableOpacity
-      onPress={handleLogin}
+      onPress={() => router.replace("/(tabs)/home")}
           style={{
             backgroundColor: "white",
             borderRadius: 30,
