@@ -9,17 +9,42 @@ import {
   Alert,
   Platform,
   FlatList,
-  ScrollView
+  ScrollView,
+  Image
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Navtab from '@/components/Navtab';
+import DocumentPicker from 'react-native-document-picker'; // Importação do Document Picker
 
 const TelaReembolso = () => {
   const navigation = useNavigation();
 
-  const [form, setForm] = useState({ data: '', valor: '', km: '', estabelecimento: '', tipo: '', descricao: '' });
+  type Comprovante = {
+    uri: string;
+    name: string;
+    [key: string]: any;
+  };
+
+  const [form, setForm] = useState<{
+    data: string;
+    valor: string;
+    km: string;
+    estabelecimento: string;
+    tipo: string;
+    descricao: string;
+    comprovante: Comprovante | null;
+  }>({
+    data: '',
+    valor: '',
+    km: '',
+    estabelecimento: '',
+    tipo: '',
+    descricao: '',
+    comprovante: null,
+  });
+
   const [reembolsos, setReembolsos] = useState([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -48,14 +73,44 @@ const TelaReembolso = () => {
     handleChange('valor', masked);
   };
 
+  const handlePickDocument = async () => {
+    try {
+      const result = await DocumentPicker.pick({
+        type: DocumentPicker.types.images, // Seleciona apenas imagens
+      });
+  
+      if (result) {
+        const file = {
+          uri: result.uri,
+          name: result.name,
+          mimeType: result.type || '', // Pode ser vazio se não detectado
+        };
+        handleChange('comprovante', file);  // Atualiza o estado com a imagem selecionada
+      }
+    } catch (error) {
+      if (DocumentPicker.isCancel(error)) {
+        // O usuário cancelou a seleção do arquivo
+        console.log('Usuário cancelou a seleção de arquivo');
+      } else {
+        console.log('Erro ao selecionar comprovante:', error);
+      }
+    }
+  };  
+
+  const handleRemoveComprovante = () => {
+    handleChange('comprovante', null);
+  };
+
   const handleAddToPacote = () => {
     if (!form.data || !form.valor || !form.km || !form.estabelecimento || !form.tipo || !form.descricao) {
       Alert.alert("Erro", "Preencha todos os campos.");
       return;
     }
 
-    setReembolsos([...reembolsos, form]);
-    setForm({ data: '', valor: '', km: '', estabelecimento: '', tipo: '', descricao: '' });
+    const formToSave = { ...form };
+
+    setReembolsos(prev => [...prev, formToSave]);
+    setForm({ data: '', valor: '', km: '', estabelecimento: '', tipo: '', descricao: '', comprovante: null });
   };
 
   const handleEnviarPacote = () => {
@@ -64,7 +119,7 @@ const TelaReembolso = () => {
       return;
     }
 
-    Alert.alert("Pacote Enviado", JSON.stringify(reembolsos, null, 2));
+    Alert.alert("Solicitação enviada", JSON.stringify(reembolsos, null, 2));
     setReembolsos([]);
   };
 
@@ -73,18 +128,17 @@ const TelaReembolso = () => {
       <Text style={styles.previewText}>#{index + 1} • {item.data} • R${item.valor} • {item.km}km • {item.estabelecimento}</Text>
       <Text style={[styles.previewText, { fontSize: 12 }]}>Tipo: {item.tipo} | {item.descricao}</Text>
     </View>
-  );  
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color="white" />
-      </TouchableOpacity>
-
       <ScrollView
         contentContainerStyle={{ alignItems: 'center', paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
         <Text style={styles.title}>Reembolso</Text>
 
         <View style={styles.inputContainer}>
@@ -166,6 +220,26 @@ const TelaReembolso = () => {
             onChangeText={(text) => handleChange('descricao', text)}
           />
 
+          {/* Campo Comprovante */}
+          <Text style={styles.label}>Comprovante:</Text>
+
+          <TouchableOpacity style={styles.pickButton} onPress={handlePickDocument}>
+            <Text style={styles.pickButtonText}>Selecionar Comprovante</Text>
+          </TouchableOpacity>
+          {form.comprovante && (
+            <View style={styles.comprovanteContainer}>
+              {form.comprovante.mimeType.startsWith('image/') ? (
+                <Image source={{ uri: form.comprovante.uri }} style={styles.comprovanteImage} />
+              ) : (
+                <Ionicons name="document-text" size={40} color="#00245D" style={{ marginRight: 10 }} />
+              )}
+              <Text style={styles.comprovanteText}>{form.comprovante.name}</Text>
+              <TouchableOpacity onPress={handleRemoveComprovante}>
+                <Ionicons name="trash" size={24} color="red" />
+              </TouchableOpacity>
+            </View>
+          )}
+
           {/* Botão Adicionar ao Pacote */}
           <TouchableOpacity style={styles.sendButton} onPress={handleAddToPacote}>
             <Text style={styles.sendButtonText}>Adicionar ao Pacote</Text>
@@ -190,11 +264,6 @@ const TelaReembolso = () => {
         )}
       </ScrollView>
 
-      {/* Botão Câmera */}
-      <TouchableOpacity style={styles.cameraButton}>
-        <Ionicons name="camera" size={32} color="white" />
-      </TouchableOpacity>
-
       <Navtab />
     </SafeAreaView>
   );
@@ -208,7 +277,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     alignSelf: 'flex-start',
-    marginBottom: 20
+    bottom: -26
   },
   title: {
     fontSize: 20,
@@ -245,22 +314,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  cameraButton: {
-    display: 'none', // botão ainda oculto
-    position: 'absolute',
-    bottom: 90,
-    backgroundColor: '#FFFFFF',
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
   previewItem: {
     backgroundColor: '#fff',
     borderRadius: 8,
@@ -294,7 +347,37 @@ const styles = StyleSheet.create({
   tipoButtonTextSelected: {
     fontWeight: 'bold',
   },
-  
+
+  comprovanteContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EAF5F8',
+    padding: 10,
+    borderRadius: 10,
+    marginBottom: 15,
+  },
+  comprovanteImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  comprovanteText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#333',
+  },
+  pickButton: {
+    backgroundColor: '#FFD700',
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  pickButtonText: {
+    color: '#00245D',
+    fontSize: 16,
+  },
 });
 
 export default TelaReembolso;
