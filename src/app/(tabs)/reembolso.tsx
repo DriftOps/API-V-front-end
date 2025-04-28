@@ -58,15 +58,46 @@ const TelaReembolso = () => {
     setForm({ data: '', valor: '', km: '', estabelecimento: '', tipo: '', descricao: '' });
   };
 
-  const handleEnviarPacote = () => {
+  const handleEnviarPacote = async () => {
     if (reembolsos.length === 0) {
       Alert.alert("Pacote vazio", "Adicione pelo menos um reembolso.");
       return;
     }
+  
+    try {
+      // Ajustar para o seu endereço de backend (ex: se está no localhost ou servidor na nuvem)
+      const response = await fetch('http://192.168.157.222:3000/refunds', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          usuario_id: '662adf6e457a4d8375c4e4b1', // Aqui você vai pegar dinamicamente depois
+          refunds: reembolsos.map(item => ({
 
-    Alert.alert("Pacote Enviado", JSON.stringify(reembolsos, null, 2));
-    setReembolsos([]);
+            data: `${item.data.split('/')[2]}-${item.data.split('/')[1].padStart(2, '0')}-${item.data.split('/')[0].padStart(2, '0')}`,
+            valor: parseFloat(item.valor.replace('.', '').replace(',', '.')), // Corrigir para número real
+            km: parseFloat(item.km),
+            estabelecimento: item.estabelecimento,
+            tipo: item.tipo,
+            descricao: item.descricao,
+            imagem: '', // Por enquanto vazio, depois você integra upload da imagem
+          }))
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Erro ao enviar o pacote');
+      }
+  
+      Alert.alert('Sucesso', 'Reembolsos enviados com sucesso!');
+      setReembolsos([]);
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Erro', 'Não foi possível enviar o pacote de reembolsos.');
+    }
   };
+  
 
   const renderReembolso = ({ item, index }) => (
     <View key={index} style={styles.previewItem}>
