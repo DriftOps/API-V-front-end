@@ -108,6 +108,7 @@ const NotificationItem = ({ item, approveRefund, rejectRefund }: any) => {
 
   return (
     <View style={styles.notification}>
+      
       <Image source={{ uri: item.userImage }} style={styles.profilePic} />
       <View style={styles.notificationInfo}>
         <Text style={styles.userName}>{item.userName}</Text>

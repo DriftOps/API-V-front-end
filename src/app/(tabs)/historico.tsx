@@ -188,7 +188,7 @@ const getStatusStyle = (status: string) => {
 const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
-    top: 20,
+    top: 40,
     left: 20,
     backgroundColor: '#002f6c',
     padding: 10,
