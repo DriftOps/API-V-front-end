@@ -13,10 +13,6 @@ export default function Home() {
     <View style={styles.container}>
       
       {/* Botão de Logout no canto superior esquerdo com ícone */}
-      <TouchableOpacity style={styles.logoutButton} 
-      onPress={() => router.replace("/")}>
-        <Ionicons name="log-out-outline" size={30} color="#002963" />
-      </TouchableOpacity>
 
       {/* Título */}
       <Text style={styles.title}>Reembolso</Text>
@@ -110,14 +106,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 5,
   },
-  logoutButton: {
-    position: "absolute",
-    top: 20,
-    left: 20,
-    backgroundColor: "white", 
-    padding: 10,
-    borderRadius: 50,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+
 });

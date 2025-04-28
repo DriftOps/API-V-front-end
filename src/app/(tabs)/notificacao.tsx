@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, Alert, SafeAreaView } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { View, Text, FlatList, StyleSheet, Image, Alert, SafeAreaView, TouchableOpacity } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import Navtab from '@/components/Navtab';
+import { Swipeable } from 'react-native-gesture-handler';
 
 interface Notification {
   id: number;
@@ -15,19 +15,19 @@ const NotificationScreen: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([
     {
       id: 1,
-      userName: 'Usuário1',
+      userName: 'Projeto A',
       userImage: 'https://example.com/profile1.jpg',
       status: 'Pendente',
     },
     {
       id: 2,
-      userName: 'Usuário2',
+      userName: 'Projeto X',
       userImage: 'https://example.com/profile2.jpg',
       status: 'Pendente',
     },
     {
       id: 3,
-      userName: 'Usuário3',
+      userName: 'Projeto B',
       userImage: 'https://example.com/profile3.jpg',
       status: 'Pendente',
     },
@@ -39,23 +39,54 @@ const NotificationScreen: React.FC = () => {
         notification.id === id ? { ...notification, status: 'Aprovado' } : notification
       )
     );
-    Alert.alert('Sucesso', `Reembolso ${id} aprovado!`);
+  
+    setTimeout(() => {
+      Alert.alert(
+        'Sucesso',
+        `Reembolso ${id} aprovado!`,
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              setNotifications((prevState) => prevState.filter((n) => n.id !== id));
+            }
+          }
+        ]
+      );
+    }, 100); // pequeno delay para garantir que o React re-renderize primeiro
   };
-
+  
   const rejectRefund = (id: number) => {
     setNotifications((prevState) =>
       prevState.map((notification) =>
         notification.id === id ? { ...notification, status: 'Reprovado' } : notification
       )
     );
-    Alert.alert('Sucesso', `Reembolso ${id} reprovado!`);
+  
+    setTimeout(() => {
+      Alert.alert(
+        'Sucesso',
+        `Reembolso ${id} reprovado!`,
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              setNotifications((prevState) => prevState.filter((n) => n.id !== id));
+            }
+          }
+        ]
+      );
+    }, 100);
   };
+  
+  
 
   return (
+
     <SafeAreaView style={styles.screen}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Notificações de Reembolso</Text>
+        <Text style={styles.headerTitle}>Notificações</Text>
       </View>
       
       {/* Conteúdo */}
@@ -134,7 +165,6 @@ const NotificationItem = ({ item, approveRefund, rejectRefund }: any) => {
   );
 };
 
-// Estilos
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
@@ -157,6 +187,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#fff',
+    left: 120
   },
   container: {
     flex: 1,
@@ -212,10 +243,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   approve: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#3275a8',
   },
   reject: {
-    backgroundColor: '#F44336',
+    backgroundColor: 'grey',
   },
   buttonText: {
     color: '#fff',

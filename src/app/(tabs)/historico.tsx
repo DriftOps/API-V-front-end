@@ -7,8 +7,8 @@ import Navtab from '@/components/Navtab';
 const initialPackages = [
   {
     id: '1',
-    name: 'KWS Transportes LTDA',
-    status: 'Análise',
+    name: 'Projeto A',
+    status: 'Pendente',
     date: '30 de Abril - 18:27',
     kilometers: 20,
     expenses: [
@@ -18,7 +18,7 @@ const initialPackages = [
   },
   {
     id: '2',
-    name: 'Cubatão AHSQC Logística',
+    name: 'Projeto B',
     status: 'Aprovado',
     date: '15 de Abril - 18:00',
     kilometers: 50,
@@ -29,7 +29,7 @@ const initialPackages = [
   },
   {
     id: '3',
-    name: 'AXJ Logística Internacional',
+    name: 'Projeto X',
     status: 'Reprovado',
     date: '10 de Abril - 14:30',
     kilometers: 35,
@@ -40,7 +40,7 @@ const initialPackages = [
   },
   {
     id: '4',
-    name: 'EJN Transportes Express',
+    name: 'Projeto Y',
     status: 'Aprovado',
     date: '12 de Abril - 09:15',
     kilometers: 75,
@@ -51,8 +51,8 @@ const initialPackages = [
   },
   {
     id: '5',
-    name: 'JBR Transporte e Logística',
-    status: 'Análise',
+    name: 'Projeto 123',
+    status: 'Pendente',
     date: '20 de Abril - 16:00',
     kilometers: 120,
     expenses: [
@@ -62,7 +62,7 @@ const initialPackages = [
   },
   {
     id: '6',
-    name: 'RTW Expresso',
+    name: 'Projeto 456',
     status: 'Reprovado',
     date: '18 de Abril - 13:45',
     kilometers: 90,
@@ -73,7 +73,7 @@ const initialPackages = [
   },
   {
     id: '7',
-    name: 'VBL Transportes LTDA',
+    name: 'Projeto 3',
     status: 'Aprovado',
     date: '5 de Abril - 08:00',
     kilometers: 60,
@@ -93,17 +93,6 @@ const TelaHistorico = () => {
     setExpandedPackage(expandedPackage === packageId ? null : packageId);
   };
 
-  const handleNameChange = (packageId: string, newName: string) => {
-    setPackages(prev =>
-      prev.map(pkg => pkg.id === packageId ? { ...pkg, name: newName } : pkg)
-    );
-  };
-
-  // Não será possível editar os valores das despesas
-  const handleAmountChange = (packageId: string, expenseId: string, newAmount: string) => {
-    // A função de alteração de valor não será mais chamada.
-  };
-
   return (
     <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
       {/* Botão Voltar */}
@@ -114,7 +103,6 @@ const TelaHistorico = () => {
       {/* Cabeçalho */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Histórico</Text>
-        <Ionicons name="settings" size={24} color="#fff" />
       </View>
 
       {/* Lista de Pacotes */}
@@ -128,7 +116,6 @@ const TelaHistorico = () => {
             <TextInput
               style={styles.packageName}
               value={item.name}
-              onChangeText={(text) => handleNameChange(item.id, text)}
             />
 
             {/* Status e Data */}
@@ -178,8 +165,8 @@ const getStatusStyle = (status: string) => {
       return { color: 'green' };
     case 'Reprovado':
       return { color: 'red' };
-    case 'Análise':
-      return { color: 'orange' };
+    case 'Pendente':
+      return { color: 'grey' };
     default:
       return { color: 'gray' };
   }
@@ -207,7 +194,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     fontWeight: 'bold',
-    marginLeft: 50,
+    left: 145
   },
   packageCard: {
     backgroundColor: 'white',
