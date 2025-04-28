@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, Alert, SafeAreaView } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import Navtab from '@/components/Navtab';
-
 
 interface Notification {
   id: number;
@@ -52,34 +51,37 @@ const NotificationScreen: React.FC = () => {
     Alert.alert('Sucesso', `Reembolso ${id} reprovado!`);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Aprovado':
-        return '#4CAF50'; // Verde
-      case 'Reprovado':
-        return '#F44336'; // Vermelho
-      default:
-        return '#FFA500'; // Laranja (pendente)
-    }
-  };
-
   return (
-    <View style={styles.screen}>
+    <SafeAreaView style={styles.screen}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Notificações de Reembolso</Text>
+      </View>
+      
+      {/* Conteúdo */}
       <View style={styles.container}>
-        <Text style={styles.title}>Notificações de Reembolso</Text>
         <FlatList
           data={notifications}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <NotificationItem item={item} approveRefund={approveRefund} rejectRefund={rejectRefund} />}
+          renderItem={({ item }) => (
+            <NotificationItem 
+              item={item} 
+              approveRefund={approveRefund} 
+              rejectRefund={rejectRefund} 
+            />
+          )}
           contentContainerStyle={{ paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}
         />
       </View>
+
+      {/* Barra de Navegação */}
       <Navtab />
-    </View>
+    </SafeAreaView>
   );
 };
 
-// Componente separado para a notificação individual
+// Componente para Notificação Individual
 const NotificationItem = ({ item, approveRefund, rejectRefund }: any) => {
   const approveScale = useSharedValue(1);
   const rejectScale = useSharedValue(1);
@@ -108,7 +110,6 @@ const NotificationItem = ({ item, approveRefund, rejectRefund }: any) => {
 
   return (
     <View style={styles.notification}>
-      
       <Image source={{ uri: item.userImage }} style={styles.profilePic} />
       <View style={styles.notificationInfo}>
         <Text style={styles.userName}>{item.userName}</Text>
@@ -133,21 +134,33 @@ const NotificationItem = ({ item, approveRefund, rejectRefund }: any) => {
   );
 };
 
+// Estilos
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#002963', 
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#002963', 
+    padding: 16,
+  },
+  logo: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    marginRight: 12,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
   },
   container: {
     flex: 1,
     padding: 16,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    alignSelf: 'center',
-    color: '#002b64',
   },
   notification: {
     flexDirection: 'row',
@@ -210,16 +223,16 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NotificationScreen;
-
-// Função auxiliar fora do componente (opcionalmente você pode mover para utils se quiser)
+// Função auxiliar
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'Aprovado':
-      return '#4CAF50'; // Verde
+      return '#4CAF50';
     case 'Reprovado':
-      return '#F44336'; // Vermelho
+      return '#F44336';
     default:
-      return '#FFA500'; // Laranja
+      return '#FFA500';
   }
 };
+
+export default NotificationScreen;
