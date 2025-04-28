@@ -6,35 +6,52 @@ import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-na
 
 export default function Navtab() {
   const navigation = useNavigation();
-  
-  const scale = useSharedValue(1);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
+  const scaleNotification = useSharedValue(1);
+  const scaleHome = useSharedValue(1);
+  const scaleProfile = useSharedValue(1);
+
+  const animatedNotification = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleNotification.value }],
   }));
 
-  const handleCenterButtonPress = () => {
-    scale.value = withSpring(1.2, {}, () => {
-      scale.value = withSpring(1);
+  const animatedHome = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleHome.value }],
+  }));
+
+  const animatedProfile = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleProfile.value }],
+  }));
+
+  const handlePress = (scaleRef: any, route: string) => {
+    scaleRef.value = withSpring(1.2, {}, () => {
+      scaleRef.value = withSpring(1);
     });
-    // Aqui você pode também navegar para uma página de "criar" se quiser!
+    navigation.navigate(route);
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('home')}>
-        <Ionicons name="home-outline" size={28} color="#fff" />
-      </TouchableOpacity>
-
-      <Animated.View style={[styles.centerButton, animatedStyle]}>
-        <TouchableOpacity onPress={handleCenterButtonPress}>
-          <Ionicons name="add-outline" size={32} color="#fff" />
+      {/* Botão Notificações */}
+      <Animated.View style={[styles.largeButton, animatedNotification]}>
+        <TouchableOpacity onPress={() => handlePress(scaleNotification, 'notificacao')}>
+          <Ionicons name="notifications-outline" size={32} color="#fff" />
         </TouchableOpacity>
       </Animated.View>
 
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('telaUsuario')}>
-        <Ionicons name="person-outline" size={28} color="#fff" />
-      </TouchableOpacity>
+      {/* Botão Home */}
+      <Animated.View style={[styles.smallButton, animatedHome]}>
+        <TouchableOpacity onPress={() => handlePress(scaleHome, 'home')}>
+          <Ionicons name="home-outline" size={28} color="#fff" />
+        </TouchableOpacity>
+      </Animated.View>
+
+      {/* Botão Perfil */}
+      <Animated.View style={[styles.largeButton, animatedProfile]}>
+        <TouchableOpacity onPress={() => handlePress(scaleProfile, 'telaUsuario')}>
+          <Ionicons name="person-outline" size={32} color="#fff" />
+        </TouchableOpacity>
+      </Animated.View>
     </View>
   );
 }
@@ -58,7 +75,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 5,
   },
-  button: {
+  smallButton: {
     backgroundColor: '#002b64',
     width: 60,
     height: 60,
@@ -66,7 +83,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  centerButton: {
+  largeButton: {
     backgroundColor: '#002b64',
     width: 70,
     height: 70,
