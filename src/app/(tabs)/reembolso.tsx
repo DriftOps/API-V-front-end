@@ -15,21 +15,34 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Navtab from '@/components/Navtab';
+import ReembolsoItem from '@/components/ReembolsoItem';
+
 
 const TelaReembolso = () => {
   const navigation = useNavigation();
 
   const [form, setForm] = useState({ data: '', valor: '', km: '', estabelecimento: '', tipo: '', descricao: '' });
-  const [reembolsos, setReembolsos] = useState([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const handleChange = (name, value) => {
+  interface Reembolso {
+    data: string;
+    valor: string;
+    km: string;
+    estabelecimento: string;
+    tipo: string;
+    descricao: string;
+  }
+  
+  const [reembolsos, setReembolsos] = useState<Reembolso[]>([]);
+  
+
+  const handleChange = (name: string, value: string) => {
     setForm({ ...form, [name]: value });
   };
 
   const showDate = () => setShowDatePicker(true);
 
-  const onChangeDate = (event, selectedDate) => {
+  const onChangeDate = (event: any, selectedDate: Date | undefined) => {
     setShowDatePicker(false);
     if (selectedDate) {
       const formatted = selectedDate.toLocaleDateString('pt-BR');
@@ -37,13 +50,13 @@ const TelaReembolso = () => {
     }
   };
 
-  const formatCurrency = (text) => {
+  const formatCurrency = (text: string) => {
     const cleaned = text.replace(/\D/g, '');
     const numericValue = (parseInt(cleaned || '0', 10) / 100).toFixed(2);
     return numericValue.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   };
 
-  const handleCurrencyChange = (text) => {
+  const handleCurrencyChange = (text: string) => {
     const masked = formatCurrency(text);
     handleChange('valor', masked);
   };
@@ -65,8 +78,7 @@ const TelaReembolso = () => {
     }
   
     try {
-      // Ajustar para o seu endereço de backend (ex: se está no localhost ou servidor na nuvem)
-      const response = await fetch('http://192.168.157.222:3000/refunds', {
+      const response = await fetch('http://localhost:3000/refunds', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -99,12 +111,27 @@ const TelaReembolso = () => {
   };
   
 
-  const renderReembolso = ({ item, index }) => (
+  interface Reembolso {
+    data: string;
+    valor: string;
+    km: string;
+    estabelecimento: string;
+    tipo: string;
+    descricao: string;
+  }
+  
+  const renderReembolso = ({ item, index }: { item: Reembolso; index: number }) => (
     <View key={index} style={styles.previewItem}>
-      <Text style={styles.previewText}>#{index + 1} • {item.data} • R${item.valor} • {item.km}km • {item.estabelecimento}</Text>
-      <Text style={[styles.previewText, { fontSize: 12 }]}>Tipo: {item.tipo} | {item.descricao}</Text>
+      <Text style={styles.previewText}>
+        #{index + 1} • {item.data} • R${item.valor} • {item.km}km • {item.estabelecimento}
+      </Text>
+      <Text style={[styles.previewText, { fontSize: 12 }]}>
+        Tipo: {item.tipo} | {item.descricao}
+      </Text>
     </View>
-  );  
+  );
+  
+  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -209,10 +236,12 @@ const TelaReembolso = () => {
             <Text style={[styles.label, { marginTop: 20 }]}>Reembolsos:</Text>
             <FlatList
               data={reembolsos}
-              renderItem={renderReembolso}
+              renderItem={({ item, index }) => <ReembolsoItem item={item} index={index} />}
               keyExtractor={(_, index) => index.toString()}
+              scrollEnabled={false}
               style={{ width: '100%', marginBottom: 15 }}
             />
+
 
             <TouchableOpacity style={[styles.sendButton, { backgroundColor: '#00C851' }]} onPress={handleEnviarPacote}>
               <Text style={[styles.sendButtonText, { color: 'white' }]}>Enviar</Text>
