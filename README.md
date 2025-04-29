@@ -19,6 +19,18 @@ Certifique-se de ter as seguintes ferramentas instaladas:
     cd src
     ```
 
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+Get-ExecutionPolicy -List
+
+
+npm install -g expo-cli
+
+npx expo install @react-native-community/datetimepicker
+npm install react-native-modal-datetime-picker
+
+npm install react-native-mask-input
+
 2. **Instale as dependências**:
     ```bash
     npm install

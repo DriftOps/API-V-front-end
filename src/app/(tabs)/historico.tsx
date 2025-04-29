@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import Navtab from '@/components/Navtab';
+
 
 const expenses = [
   { id: '1', category: 'Jantar', date: '18:27 - Abril 30', amount: '+R$25,00', icon: 'restaurant' },
@@ -11,7 +13,7 @@ const expenses = [
   { id: '5', category: 'Jantar', date: '20:50 - Março 31', amount: '+R$27,20', icon: 'restaurant' },
 ];
 
-const ExpenseScreen = () => {
+const TelaHistorico = () => {
   const navigation = useNavigation();
 
   return (
@@ -48,7 +50,9 @@ const ExpenseScreen = () => {
           </View>
         )}
       />
+      <Navtab />
     </View>
+    
   );
 };
 
@@ -64,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ExpenseScreen;
+export default TelaHistorico;

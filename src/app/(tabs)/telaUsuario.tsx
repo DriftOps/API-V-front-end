@@ -1,8 +1,10 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import Navtab from '@/components/Navtab';
 
-const ProfileScreen = () => {
+
+const TelaPerfil = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -29,17 +31,10 @@ const ProfileScreen = () => {
         <Text style={styles.reembolsoValor}>R$1.893,00</Text>
       </View>
 
-      <View style={styles.footer}>
-        <TouchableOpacity>
-          <Ionicons name="home" size={30} color="#002D62" />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="add-circle" size={30} color="#002D62" />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="person" size={30} color="#002D62" />
-        </TouchableOpacity>
-      </View>
+     
+      <Navtab />
+    
+
 
     </View>
     
@@ -49,10 +44,10 @@ const ProfileScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F4FFF6", alignItems: "center" },
-  header: { backgroundColor: "#002D62", width: "100%", height: 150, alignItems: "center", justifyContent: "center" },
-  title: { color: "#FFF", fontSize: 18, fontWeight: "bold", top: -20,  },
-  logo: {  },
+  container: { flex: 1, backgroundColor: "#FFFFFF", alignItems: "center" },
+  header: { backgroundColor: "#002D62", width: "100%", height: 190, alignItems: "center", justifyContent: "center" },
+  title: { color: "#FFF", fontSize: 18, fontWeight: "bold", top: 30,  },
+  logo: {marginTop: 50},
   profileContainer: {marginTop: 10, width: "90%", padding: 20 },
   avatar: { marginBottom: 10, alignItems: "center" },
   label: { fontSize: 18, fontWeight: "bold", color: "#333"},
@@ -63,4 +58,4 @@ const styles = StyleSheet.create({
   footer: { flexDirection: "row", borderTopWidth: 5, borderTopColor: "#002D62" , padding: 15 , justifyContent: "space-around", width: "100%", position: "absolute", bottom: 20 }
 });
 
-export default ProfileScreen;
+export default TelaPerfil;

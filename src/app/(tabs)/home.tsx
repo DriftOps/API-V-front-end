@@ -2,13 +2,16 @@ import React from "react";
 import { Text, View, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import Navtab from '@/components/Navtab';
 
-export default function Reembolso() {
+
+export default function Home() {
 
     const router = useRouter();
 
   return (
     <View style={styles.container}>
+      
       {/* Botão de Logout no canto superior esquerdo com ícone */}
       <TouchableOpacity style={styles.logoutButton} 
       onPress={() => router.replace("/")}>
@@ -17,6 +20,8 @@ export default function Reembolso() {
 
       {/* Título */}
       <Text style={styles.title}>Reembolso</Text>
+
+      <Image source={require('../../assets/images/gswlogo.png')} ></Image>
 
       {/* Total Gasto */}
       <View style={styles.totalContainer}>
@@ -30,7 +35,7 @@ export default function Reembolso() {
       <View style={styles.card}>
       <TouchableOpacity 
         style={styles.option}
-        onPress={() => router.replace("/(tabs)/transporte")}
+        onPress={() => router.replace("/(tabs)/reembolso")}
       >
         <Image source={require("../../assets/images/transport.png")} style={styles.optionIcon} />
         <Text style={styles.optionText}>Solicitar reembolso</Text>
@@ -44,6 +49,7 @@ export default function Reembolso() {
         <Text style={styles.optionText}>Histórico</Text>
       </TouchableOpacity>
       </View>
+      <Navtab />
     </View>
   );
 }
@@ -61,12 +67,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 30,
+    marginTop: -90
   },
   totalContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 7,
     marginBottom: 10,
+    marginTop: 40
   },
   totalText: {
     color: "white",
@@ -85,8 +93,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    width: "65%",
-    height: "59%",
+    width: "60%",
+    height: "45%",
   },
   option: {
     alignItems: "center",
