@@ -33,21 +33,21 @@ export default function Navtab() {
   return (
     <View style={styles.container}>
       {/* Botão Notificações */}
-      <Animated.View style={[styles.largeButton, animatedNotification]}>
+      <Animated.View style={[styles.largeButton]}>
         <TouchableOpacity onPress={() => handlePress(scaleNotification, 'notificacao')}>
           <Ionicons name="notifications-outline" size={32} color="#fff" />
         </TouchableOpacity>
       </Animated.View>
 
       {/* Botão Home */}
-      <Animated.View style={[styles.smallButton, animatedHome]}>
+      <Animated.View style={[styles.smallButton]}>
         <TouchableOpacity onPress={() => handlePress(scaleHome, 'home')}>
           <Ionicons name="home-outline" size={28} color="#fff" />
         </TouchableOpacity>
       </Animated.View>
 
       {/* Botão Perfil */}
-      <Animated.View style={[styles.largeButton, animatedProfile]}>
+      <Animated.View style={[styles.largeButton]}>
         <TouchableOpacity onPress={() => handlePress(scaleProfile, 'telaUsuario')}>
           <Ionicons name="person-outline" size={32} color="#fff" />
         </TouchableOpacity>
