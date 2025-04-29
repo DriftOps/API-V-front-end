@@ -33,7 +33,7 @@ export default function Home() {
         style={styles.option}
         onPress={() => router.replace("/(tabs)/reembolso")}
       >
-        <Image source={require("../../assets/images/transport.png")} style={styles.optionIcon} />
+        <Image source={require("../../assets/images/add.png")} style={styles.optionIcon} />
         <Text style={styles.optionText}>Solicitar reembolso</Text>
       </TouchableOpacity>
 

@@ -24,7 +24,7 @@ const TelaPerfil = () => {
         
         <Text style={styles.label}>Nome</Text>
         <View style={styles.infoBox}>
-          <Text style={styles.infoText}>User 1</Text>
+          <Text style={styles.infoText}>Luiz Henrique</Text>
         </View>
         
         <Text style={styles.label}>Data Registro</Text>

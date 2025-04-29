@@ -12,7 +12,7 @@ const initialPackages = [
     date: '30 de Abril - 18:27',
     kilometers: 20,
     expenses: [
-      { id: '1', category: 'Alimentação', amount: 52.00 },
+      { id: '1', category: 'Geral', amount: 52.00 },
       { id: '2', category: 'Transporte', amount: 65.00 }
     ]
   },
@@ -23,7 +23,7 @@ const initialPackages = [
     date: '15 de Abril - 18:00',
     kilometers: 50,
     expenses: [
-      { id: '3', category: 'Alimentação', amount: 25.00 },
+      { id: '3', category: 'Geral', amount: 25.00 },
       { id: '4', category: 'Transporte', amount: 46.00 }
     ]
   },
@@ -34,7 +34,7 @@ const initialPackages = [
     date: '10 de Abril - 14:30',
     kilometers: 35,
     expenses: [
-      { id: '5', category: 'Alimentação', amount: 30.00 },
+      { id: '5', category: 'Geral', amount: 30.00 },
       { id: '6', category: 'Transporte', amount: 40.00 }
     ]
   },
@@ -45,7 +45,7 @@ const initialPackages = [
     date: '12 de Abril - 09:15',
     kilometers: 75,
     expenses: [
-      { id: '7', category: 'Alimentação', amount: 20.00 },
+      { id: '7', category: 'Geral', amount: 20.00 },
       { id: '8', category: 'Transporte', amount: 60.00 }
     ]
   },
@@ -56,7 +56,7 @@ const initialPackages = [
     date: '20 de Abril - 16:00',
     kilometers: 120,
     expenses: [
-      { id: '9', category: 'Alimentação', amount: 35.00 },
+      { id: '9', category: 'Geral', amount: 35.00 },
       { id: '10', category: 'Transporte', amount: 80.00 }
     ]
   },
@@ -67,7 +67,7 @@ const initialPackages = [
     date: '18 de Abril - 13:45',
     kilometers: 90,
     expenses: [
-      { id: '11', category: 'Alimentação', amount: 50.00 },
+      { id: '11', category: 'Geral', amount: 50.00 },
       { id: '12', category: 'Transporte', amount: 90.00 }
     ]
   },
@@ -78,7 +78,7 @@ const initialPackages = [
     date: '5 de Abril - 08:00',
     kilometers: 60,
     expenses: [
-      { id: '13', category: 'Alimentação', amount: 40.00 },
+      { id: '13', category: 'Geral', amount: 40.00 },
       { id: '14', category: 'Transporte', amount: 70.00 }
     ]
   },
