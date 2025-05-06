@@ -7,7 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Cadastro() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [user, setUser] = useState("");
   const [senha, setSenha] = useState("");
 
   const handleLogin = async () => {
@@ -17,7 +17,7 @@ export default function Cadastro() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, senha }),
+        body: JSON.stringify({ user, senha }),
       });
   
       const data = await response.json();
@@ -64,8 +64,8 @@ export default function Cadastro() {
         height: 50,
         width: 250
       }}
-      value={email}
-      onChangeText={(text) => setEmail(text)}>
+      value={user}
+      onChangeText={(text) => setUser(text)}>
       </TextInput>
       </View>
 
