@@ -1,22 +1,51 @@
 import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import Navtab from '@/components/Navtab';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  Container, Header, Title, Logo,
+  ProfileContainer, Avatar, Label,
+  InfoBox, InfoText, ReembolsoLabel, ReembolsoValor
+} from '../../hooks/telaUsuario.styles';
 
 const TelaPerfil = () => {
   const [reembolso, setReembolso] = useState<number>(0);
-  const [nome, setNome] = useState<string>(''); 
+  const [nome, setNome] = useState<string>('');
+  const [dataRegistro, setDataRegistro] = useState<string>('04/04/2025'); // valor default
 
-  const userId = "ID_DO_USUARIO"; // depois você pega dinâmico
+  function formatarData(data: string) {
+    const date = new Date(data);
+    return date.toLocaleDateString('pt-BR');
+  }
+
 
   useEffect(() => {
     async function carregarDados() {
-      const total = await fetchTotalRefund(userId);
-      setReembolso(total);
-      setNome("Luiz Henrique Souza Silva"); // futuramente também puxa do backend
+      try {
+        const id = await AsyncStorage.getItem('userId');
+        if (!id) return;
+  
+        const userResponse = await fetch(`http://localhost:3000/users/${id}`);
+        const userData = await userResponse.json();
+  
+        if (userData.success) {
+          setNome(userData.body.fullName);
+          if (userData.body.createdAt) {
+            setDataRegistro(formatarData(userData.body.createdAt));
+          }
+        }
+  
+        const total = await fetchTotalRefund(id);
+        setReembolso(total);
+      } catch (error) {
+        console.error("Erro ao carregar dados do usuário:", error);
+      }
     }
+  
     carregarDados();
   }, []);
+  
+  
 
   async function fetchTotalRefund(userId: string) {
     try {
@@ -29,56 +58,47 @@ const TelaPerfil = () => {
     }
   }
 
+  async function fetchUserData(userId: string) {
+    try {
+      const response = await fetch(`http://localhost:3000/users/${userId}`);
+      const data = await response.json();
+      return data.success ? data.user : null;
+    } catch (error) {
+      console.error("Erro ao buscar dados do usuário:", error);
+      return null;
+    }
+  }
+
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Perfil</Text>
-        <Image source={require('../../assets/images/gswlogo.png')} style={styles.logo} ></Image>
-      </View>
-      
+    <Container>
+      <Header>
+        <Title>Perfil</Title>
+        <Logo source={require('../../assets/images/gswlogo.png')} />
+      </Header>
+
       <ProfileContainer>
         <Avatar>
           <Ionicons name="person-circle-outline" size={200} color="#002D62" />
         </Avatar>
-        
-        <Text style={styles.label}>Nome</Text>
-        <View style={styles.infoBox}>
-          <Text style={styles.infoText}>Luiz Henrique Souza Silva</Text>
-        </View>
-        
+
+        <Label>Nome</Label>
+        <InfoBox>
+          <InfoText>{nome}</InfoText>
+        </InfoBox>
+
         <Label>Data Registro</Label>
         <InfoBox>
-          <InfoText>04/04/2025</InfoText>
+          <InfoText>{dataRegistro}</InfoText>
         </InfoBox>
-        
+
+
         <ReembolsoLabel>Quant. De Reembolso</ReembolsoLabel>
         <ReembolsoValor>R${reembolso.toFixed(2)}</ReembolsoValor>
       </ProfileContainer>
 
       <Navtab />
-    
-
-
-    </View>
-    
-
-    
+    </Container>
   );
 };
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFFFFF", alignItems: "center" },
-  header: { backgroundColor: "#002D62", width: "100%", height: 190, alignItems: "center", justifyContent: "center" },
-  title: { color: "#FFF", fontSize: 18, fontWeight: "bold", top: 30,  },
-  logo: {marginTop: 50},
-  profileContainer: {marginTop: 10, width: "90%", padding: 20 },
-  avatar: { marginBottom: 10, alignItems: "center" },
-  label: { fontSize: 18, fontWeight: "bold", color: "#333"},
-  infoBox: { backgroundColor: "#002D62", borderRadius: 30, padding: 15, marginTop: 9, alignItems: "center" },
-  infoText: { color: "#FFF", fontSize: 20, alignItems: "center" },
-  reembolsoLabel: { marginTop: 50, fontSize: 14,fontWeight: "bold", color: "#333", textAlign: "center" },
-  reembolsoValor: { fontSize: 20, fontWeight: "bold", color: "#002D62", textAlign: "center" },
-  footer: { flexDirection: "row", borderTopWidth: 5, borderTopColor: "#002D62" , padding: 15 , justifyContent: "space-around", width: "100%", position: "absolute", bottom: 20 }
-});
 
 export default TelaPerfil;
