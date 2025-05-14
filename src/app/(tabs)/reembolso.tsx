@@ -11,9 +11,10 @@ import {
   FlatList,
   ScrollView
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons'; 
 import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import * as ImagePicker from 'expo-image-picker';
 import Navtab from '@/components/Navtab';
 
 const TelaReembolso = () => {
@@ -22,6 +23,8 @@ const TelaReembolso = () => {
   const [form, setForm] = useState({ data: '', valor: '', km: '', estabelecimento: '', tipo: '', descricao: '' });
   const [reembolsos, setReembolsos] = useState([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [anexo, setAnexo] = useState(null);
+
 
   const handleChange = (name, value) => {
     setForm({ ...form, [name]: value });
@@ -35,6 +38,35 @@ const TelaReembolso = () => {
       const formatted = selectedDate.toLocaleDateString('pt-BR');
       handleChange('data', formatted);
     }
+  };
+
+  const pickImage = async () => {
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.All,
+    allowsEditing: true,
+    quality: 0.7,
+    base64: true,
+  });
+
+  if (!result.canceled) {
+    setAnexo(result.assets[0]); // assets[0].uri, assets[0].base64
+  }
+};
+
+  const takePhoto = async () => {
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      quality: 0.7,
+      base64: true,
+    });
+
+    if (!result.canceled) {
+      setAnexo(result.assets[0]);
+    }
+  };
+
+  const removeAnexo = () => {
+    setAnexo(null);
   };
 
   const formatCurrency = (text) => {
@@ -81,7 +113,7 @@ const TelaReembolso = () => {
             estabelecimento: item.estabelecimento,
             tipo: item.tipo,
             descricao: item.descricao,
-            imagem: '', // Por enquanto vazio, depois você integra upload da imagem
+            imagem: anexo ? `data:${anexo.type || 'image/jpeg'};base64,${anexo.base64}` : '',
           }))
         }),
       });
@@ -197,6 +229,28 @@ const TelaReembolso = () => {
             onChangeText={(text) => handleChange('descricao', text)}
           />
 
+            <Text style={styles.label}>Comprovante:</Text>
+
+          {anexo ? (
+            <View style={{ alignItems: 'center', marginBottom: 15 }}>
+              <Text style={{ color: '#fff', marginBottom: 5 }}>Pré-visualização:</Text>
+              <Image source={{ uri: anexo.uri }} style={{ width: 200, height: 200, borderRadius: 10 }} />
+              <TouchableOpacity onPress={removeAnexo} style={[styles.sendButton, { backgroundColor: '#FF4444', marginTop: 10 }]}>
+                <Text style={styles.sendButtonText}>Remover Anexo</Text>
+              </TouchableOpacity>
+            </View>
+            ) : (
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 }}>
+                <TouchableOpacity style={[styles.sendButton, { flex: 1, marginRight: 5 }]} onPress={pickImage}>
+                  <Text style={styles.sendButtonText}>Selecionar Imagem</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.sendButton, { flex: 1, marginLeft: 5 }]} onPress={takePhoto}>
+                  <Text style={styles.sendButtonText}>Tirar Foto</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+
           {/* Botão Adicionar ao Pacote */}
           <TouchableOpacity style={styles.sendButton} onPress={handleAddToPacote}>
             <Text style={styles.sendButtonText}>Adicionar ao Pacote</Text>
@@ -220,11 +274,6 @@ const TelaReembolso = () => {
           </>
         )}
       </ScrollView>
-
-      {/* Botão Câmera */}
-      <TouchableOpacity style={styles.cameraButton}>
-        <Ionicons name="camera" size={32} color="white" />
-      </TouchableOpacity>
 
       <Navtab />
     </SafeAreaView>
