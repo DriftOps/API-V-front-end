@@ -26,7 +26,7 @@ const TelaReembolso = () => {
   const [anexos, setAnexos] = useState([]);
 
   const [reembolsos, setReembolsos] = useState([
-    { tipo: '', valor: '', km: '', estabelecimento: '' },
+    { tipo: '', valor: '', km: '', estabelecimento: '', imagens: []},
   ]);
 
   const showDate = () => setShowDatePicker(true);
@@ -39,30 +39,35 @@ const TelaReembolso = () => {
     }
   };
 
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      quality: 0.7,
-      base64: true,
-    });
+const pickImage = async (index) => {
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.All,
+    allowsEditing: true,
+    quality: 0.7,
+    base64: true,
+  });
 
-    if (!result.canceled) {
-      setAnexos([...anexos, result.assets[0]]);
-    }
-  };
+  if (!result.canceled) {
+    const novos = [...reembolsos];
+    novos[index].imagens.push(`data:${result.assets[0].type || 'image/jpeg'};base64,${result.assets[0].base64}`);
+    setReembolsos(novos);
+  }
+};
 
-  const takePhoto = async () => {
-    const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      quality: 0.7,
-      base64: true,
-    });
+const takePhoto = async (index) => {
+  const result = await ImagePicker.launchCameraAsync({
+    allowsEditing: true,
+    quality: 0.7,
+    base64: true,
+  });
 
-    if (!result.canceled) {
-      setAnexos([...anexos, result.assets[0]]);
-    }
-  };
+  if (!result.canceled) {
+    const novos = [...reembolsos];
+    novos[index].imagens.push(`data:${result.assets[0].type || 'image/jpeg'};base64,${result.assets[0].base64}`);
+    setReembolsos(novos);
+  }
+};
+
 
   const removeAnexo = (index) => {
     const novosAnexos = anexos.filter((_, i) => i !== index);
@@ -76,7 +81,7 @@ const TelaReembolso = () => {
   };
 
   const handleAddReembolso = () => {
-    setReembolsos([...reembolsos, { tipo: '', valor: '', km: '', estabelecimento: '' }]);
+    setReembolsos([...reembolsos, { tipo: '', valor: '', km: '', estabelecimento: '', imagens: [] }]);
   };
 
   const handleRemoveReembolso = (index) => {
@@ -84,40 +89,40 @@ const TelaReembolso = () => {
     setReembolsos(novos);
   };
 
-  const handleEnviarPacote = async () => {
-    if (!data || reembolsos.length === 0) {
-      Alert.alert('Erro', 'Selecione a data e adicione ao menos uma despesa.');
-      return;
-    }
+const handleEnviarPacote = async () => {
+  if (!data || reembolsos.length === 0) {
+    Alert.alert('Erro', 'Selecione a data e adicione ao menos uma despesa.');
+    return;
+  }
 
-    try {
-      const response = await fetch('http://192.168.157.222:3000/refunds', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          usuario_id: '662adf6e457a4d8375c4e4b1',
-          refunds: reembolsos.map((item) => ({
-            data: `${data.split('/')[2]}-${data.split('/')[1].padStart(2, '0')}-${data.split('/')[0].padStart(2, '0')}`,
-            valor: parseFloat(item.valor.replace('.', '').replace(',', '.')),
-            km: parseFloat(item.km),
-            estabelecimento: item.estabelecimento,
-            tipo: item.tipo,
-            imagens: anexos.map((anexo) => `data:${anexo.type || 'image/jpeg'};base64,${anexo.base64}`),
-          })),
-        }),
-      });
+  try {
+    const response = await fetch('http://192.168.157.222:3000/refunds', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        usuario_id: '662adf6e457a4d8375c4e4b1',
+        refunds: reembolsos.map((item) => ({
+          data: `${data.split('/')[2]}-${data.split('/')[1].padStart(2, '0')}-${data.split('/')[0].padStart(2, '0')}`,
+          valor: parseFloat(item.valor.replace('.', '').replace(',', '.')),
+          km: parseFloat(item.km),
+          estabelecimento: item.estabelecimento,
+          tipo: item.tipo,
+          imagem: item.imagens[0] || '', // ou "imagens: item.imagens" se quiser várias
+        })),
+      }),
+    });
 
-      if (!response.ok) throw new Error('Erro ao enviar o pacote');
+    if (!response.ok) throw new Error('Erro ao enviar o pacote');
 
-      Alert.alert('Sucesso', 'Reembolsos enviados com sucesso!');
-      setReembolsos([{ tipo: '', valor: '', km: '', estabelecimento: '' }]);
-      setAnexos([]);
-      setData('');
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Erro', 'Não foi possível enviar o pacote.');
-    }
-  };
+    Alert.alert('Sucesso', 'Reembolsos enviados com sucesso!');
+    setReembolsos([{ tipo: '', valor: '', km: '', estabelecimento: '', imagens: [] }]);
+    setData('');
+  } catch (error) {
+    console.error(error);
+    Alert.alert('Erro', 'Não foi possível enviar o pacote.');
+  }
+};
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -230,7 +235,7 @@ const TelaReembolso = () => {
 
           <Text style={styles.label}>Anexos:</Text>
 
-          {anexos.length > 0 && (
+          {item.imagens.length > 0 && item.imagens.map((img, i) => (
             <View style={{ alignItems: 'center', marginBottom: 15 }}>
               {anexos.map((item, index) => (
                 <View key={index} style={{ marginBottom: 10, alignItems: 'center' }}>
