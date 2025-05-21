@@ -91,7 +91,7 @@ const TelaReembolso = () => {
     }
 
     try {
-      const response = await fetch('http://192.168.157.222:3000/refunds', {
+      const response = await fetch('http://192.168.184.222:3000/refunds', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
