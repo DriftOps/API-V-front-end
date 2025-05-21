@@ -9,7 +9,6 @@ import {
   SafeAreaView,
   Alert,
   Platform,
-  FlatList,
   ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,10 +22,9 @@ const TelaReembolso = () => {
 
   const [data, setData] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [anexos, setAnexos] = useState([]);
 
   const [reembolsos, setReembolsos] = useState([
-    { tipo: '', valor: '', km: '', estabelecimento: '' },
+    { tipo: '', valor: '', km: '', estabelecimento: '', imagens: [] },
   ]);
 
   const showDate = () => setShowDatePicker(true);
@@ -39,7 +37,7 @@ const TelaReembolso = () => {
     }
   };
 
-  const pickImage = async () => {
+  const pickImage = async (index) => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -48,11 +46,13 @@ const TelaReembolso = () => {
     });
 
     if (!result.canceled) {
-      setAnexos([...anexos, result.assets[0]]);
+      const novos = [...reembolsos];
+      novos[index].imagens.push(result.assets[0]);
+      setReembolsos(novos);
     }
   };
 
-  const takePhoto = async () => {
+  const takePhoto = async (index) => {
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       quality: 0.7,
@@ -60,13 +60,16 @@ const TelaReembolso = () => {
     });
 
     if (!result.canceled) {
-      setAnexos([...anexos, result.assets[0]]);
+      const novos = [...reembolsos];
+      novos[index].imagens.push(result.assets[0]);
+      setReembolsos(novos);
     }
   };
 
-  const removeAnexo = (index) => {
-    const novosAnexos = anexos.filter((_, i) => i !== index);
-    setAnexos(novosAnexos);
+  const removeAnexo = (reembolsoIndex, imagemIndex) => {
+    const novos = [...reembolsos];
+    novos[reembolsoIndex].imagens = novos[reembolsoIndex].imagens.filter((_, i) => i !== imagemIndex);
+    setReembolsos(novos);
   };
 
   const formatCurrency = (text) => {
@@ -76,7 +79,7 @@ const TelaReembolso = () => {
   };
 
   const handleAddReembolso = () => {
-    setReembolsos([...reembolsos, { tipo: '', valor: '', km: '', estabelecimento: '' }]);
+    setReembolsos([...reembolsos, { tipo: '', valor: '', km: '', estabelecimento: '', imagens: [] }]);
   };
 
   const handleRemoveReembolso = (index) => {
@@ -102,7 +105,7 @@ const TelaReembolso = () => {
             km: parseFloat(item.km),
             estabelecimento: item.estabelecimento,
             tipo: item.tipo,
-            imagens: anexos.map((anexo) => `data:${anexo.type || 'image/jpeg'};base64,${anexo.base64}`),
+            imagens: item.imagens.map((img) => `data:${img.type || 'image/jpeg'};base64,${img.base64}`),
           })),
         }),
       });
@@ -110,8 +113,7 @@ const TelaReembolso = () => {
       if (!response.ok) throw new Error('Erro ao enviar o pacote');
 
       Alert.alert('Sucesso', 'Reembolsos enviados com sucesso!');
-      setReembolsos([{ tipo: '', valor: '', km: '', estabelecimento: '' }]);
-      setAnexos([]);
+      setReembolsos([{ tipo: '', valor: '', km: '', estabelecimento: '', imagens: [] }]);
       setData('');
     } catch (error) {
       console.error(error);
@@ -121,12 +123,10 @@ const TelaReembolso = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      
-
       <ScrollView contentContainerStyle={{ alignItems: 'center', paddingBottom: 100 }} showsVerticalScrollIndicator={true}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={24} color="white" />
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
 
         <Text style={styles.title}>Nova solicitação</Text>
 
@@ -213,6 +213,31 @@ const TelaReembolso = () => {
                 }}
               />
 
+              {item.imagens.length > 0 && (
+                <View style={{ alignItems: 'center', marginBottom: 15 }}>
+                  {item.imagens.map((img, imgIndex) => (
+                    <View key={imgIndex} style={{ marginBottom: 10, alignItems: 'center' }}>
+                      <Image source={{ uri: img.uri }} style={{ width: 200, height: 200, borderRadius: 10 }} />
+                      <TouchableOpacity
+                        onPress={() => removeAnexo(index, imgIndex)}
+                        style={[styles.sendButton, { backgroundColor: '#FF4444', marginTop: 5 }]}
+                      >
+                        <Text style={styles.sendButtonText}>Remover</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 }}>
+                <TouchableOpacity style={[styles.sendButton, { flex: 1, marginRight: 5 }]} onPress={() => pickImage(index)}>
+                  <Text style={styles.sendButtonText}>Selecionar Imagem</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.sendButton, { flex: 1, marginLeft: 5 }]} onPress={() => takePhoto(index)}>
+                  <Text style={styles.sendButtonText}>Tirar Foto</Text>
+                </TouchableOpacity>
+              </View>
+
               {reembolsos.length > 1 && (
                 <TouchableOpacity
                   style={[styles.sendButton, { backgroundColor: '#FF4444' }]}
@@ -227,33 +252,6 @@ const TelaReembolso = () => {
           <TouchableOpacity style={[styles.sendButton, { backgroundColor: '#007AFF' }]} onPress={handleAddReembolso}>
             <Text style={[styles.sendButtonText, { color: 'white' }]}>+ Adicionar Nova Despesa</Text>
           </TouchableOpacity>
-
-          <Text style={styles.label}>Anexos:</Text>
-
-          {anexos.length > 0 && (
-            <View style={{ alignItems: 'center', marginBottom: 15 }}>
-              {anexos.map((item, index) => (
-                <View key={index} style={{ marginBottom: 10, alignItems: 'center' }}>
-                  <Image source={{ uri: item.uri }} style={{ width: 200, height: 200, borderRadius: 10 }} />
-                  <TouchableOpacity
-                    onPress={() => removeAnexo(index)}
-                    style={[styles.sendButton, { backgroundColor: '#FF4444', marginTop: 5 }]}
-                  >
-                    <Text style={styles.sendButtonText}>Remover</Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
-            </View>
-          )}
-
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 }}>
-            <TouchableOpacity style={[styles.sendButton, { flex: 1, marginRight: 5 }]} onPress={pickImage}>
-              <Text style={styles.sendButtonText}>Selecionar Imagem</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.sendButton, { flex: 1, marginLeft: 5 }]} onPress={takePhoto}>
-              <Text style={styles.sendButtonText}>Tirar Foto</Text>
-            </TouchableOpacity>
-          </View>
 
           <TouchableOpacity
             style={[styles.sendButton, { backgroundColor: '#00C851' }]}
