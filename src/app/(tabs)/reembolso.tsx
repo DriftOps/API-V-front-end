@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   View,
+  Image,
   Text,
   TextInput,
   TouchableOpacity,
@@ -9,23 +10,24 @@ import {
   Alert,
   Platform,
   FlatList,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import * as ImagePicker from 'expo-image-picker';
 import Navtab from '@/components/Navtab';
 
 const TelaReembolso = () => {
   const navigation = useNavigation();
 
-  const [form, setForm] = useState({ data: '', valor: '', km: '', estabelecimento: '', tipo: '', descricao: '' });
-  const [reembolsos, setReembolsos] = useState([]);
+  const [data, setData] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [anexos, setAnexos] = useState([]);
 
-  const handleChange = (name, value) => {
-    setForm({ ...form, [name]: value });
-  };
+  const [reembolsos, setReembolsos] = useState([
+    { tipo: '', valor: '', km: '', estabelecimento: '' },
+  ]);
 
   const showDate = () => setShowDatePicker(true);
 
@@ -33,8 +35,38 @@ const TelaReembolso = () => {
     setShowDatePicker(false);
     if (selectedDate) {
       const formatted = selectedDate.toLocaleDateString('pt-BR');
-      handleChange('data', formatted);
+      setData(formatted);
     }
+  };
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      quality: 0.7,
+      base64: true,
+    });
+
+    if (!result.canceled) {
+      setAnexos([...anexos, result.assets[0]]);
+    }
+  };
+
+  const takePhoto = async () => {
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      quality: 0.7,
+      base64: true,
+    });
+
+    if (!result.canceled) {
+      setAnexos([...anexos, result.assets[0]]);
+    }
+  };
+
+  const removeAnexo = (index) => {
+    const novosAnexos = anexos.filter((_, i) => i !== index);
+    setAnexos(novosAnexos);
   };
 
   const formatCurrency = (text) => {
@@ -43,56 +75,66 @@ const TelaReembolso = () => {
     return numericValue.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   };
 
-  const handleCurrencyChange = (text) => {
-    const masked = formatCurrency(text);
-    handleChange('valor', masked);
+  const handleAddReembolso = () => {
+    setReembolsos([...reembolsos, { tipo: '', valor: '', km: '', estabelecimento: '' }]);
   };
 
-  const handleAddToPacote = () => {
-    if (!form.data || !form.valor || !form.km || !form.estabelecimento || !form.tipo || !form.descricao) {
-      Alert.alert("Erro", "Preencha todos os campos.");
+  const handleRemoveReembolso = (index) => {
+    const novos = reembolsos.filter((_, i) => i !== index);
+    setReembolsos(novos);
+  };
+
+  const handleEnviarPacote = async () => {
+    if (!data || reembolsos.length === 0) {
+      Alert.alert('Erro', 'Selecione a data e adicione ao menos uma despesa.');
       return;
     }
 
-    setReembolsos([...reembolsos, form]);
-    setForm({ data: '', valor: '', km: '', estabelecimento: '', tipo: '', descricao: '' });
-  };
+    try {
+      const response = await fetch('http://192.168.157.222:3000/refunds', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          usuario_id: '662adf6e457a4d8375c4e4b1',
+          refunds: reembolsos.map((item) => ({
+            data: `${data.split('/')[2]}-${data.split('/')[1].padStart(2, '0')}-${data.split('/')[0].padStart(2, '0')}`,
+            valor: parseFloat(item.valor.replace('.', '').replace(',', '.')),
+            km: parseFloat(item.km),
+            estabelecimento: item.estabelecimento,
+            tipo: item.tipo,
+            imagens: anexos.map((anexo) => `data:${anexo.type || 'image/jpeg'};base64,${anexo.base64}`),
+          })),
+        }),
+      });
 
-  const handleEnviarPacote = () => {
-    if (reembolsos.length === 0) {
-      Alert.alert("Pacote vazio", "Adicione pelo menos um reembolso.");
-      return;
+      if (!response.ok) throw new Error('Erro ao enviar o pacote');
+
+      Alert.alert('Sucesso', 'Reembolsos enviados com sucesso!');
+      setReembolsos([{ tipo: '', valor: '', km: '', estabelecimento: '' , custo_dist: '' }]);
+      setAnexos([]);
+      setData('');
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Erro', 'Não foi possível enviar o pacote.');
     }
-
-    Alert.alert("Pacote Enviado", JSON.stringify(reembolsos, null, 2));
-    setReembolsos([]);
   };
-
-  const renderReembolso = ({ item, index }) => (
-    <View key={index} style={styles.previewItem}>
-      <Text style={styles.previewText}>#{index + 1} • {item.data} • R${item.valor} • {item.km}km • {item.estabelecimento}</Text>
-      <Text style={[styles.previewText, { fontSize: 12 }]}>Tipo: {item.tipo} | {item.descricao}</Text>
-    </View>
-  );  
 
   return (
     <SafeAreaView style={styles.container}>
+      
+
+      <ScrollView contentContainerStyle={{ alignItems: 'center', paddingBottom: 100 }} showsVerticalScrollIndicator={true}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
 
-      <ScrollView
-        contentContainerStyle={{ alignItems: 'center', paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
-      >
-        <Text style={styles.title}>Reembolso</Text>
+        <Text style={styles.title}>Nova solicitação</Text>
 
         <View style={styles.inputContainer}>
-          {/* Campo Data */}
           <Text style={styles.label}>Data:</Text>
           <TouchableOpacity style={styles.input} onPress={showDate}>
-            <Text style={{ color: form.data ? '#000' : '#ccc', fontSize: 16 }}>
-              {form.data || 'Selecionar data'}
+            <Text style={{ color: data ? '#000' : '#ccc', fontSize: 16 }}>
+              {data || 'Selecionar data'}
             </Text>
           </TouchableOpacity>
 
@@ -106,94 +148,139 @@ const TelaReembolso = () => {
             />
           )}
 
-          {/* Campo Valor */}
-          <Text style={styles.label}>Valor:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite o valor"
-            placeholderTextColor="#ccc"
-            keyboardType="numeric"
-            value={form.valor}
-            onChangeText={handleCurrencyChange}
-          />
+          <Text style={[styles.label, { marginTop: 20 }]}>Despesas:</Text>
 
-          <Text style={styles.label}>Tipo:</Text>
-          <View style={styles.tipoContainer}>
-            <TouchableOpacity
-              style={[styles.tipoButton, form.tipo === 'Geral' && styles.tipoButtonSelected]}
-              onPress={() => handleChange('tipo', 'Geral')}
-            >
-              <Text style={[styles.tipoButtonText, form.tipo === 'Geral' && styles.tipoButtonTextSelected]}>Geral</Text>
+          {reembolsos.map((item, index) => (
+            <View key={index} style={{ marginBottom: 20, backgroundColor: '#335da1', padding: 10, borderRadius: 10 }}>
+              <Text style={[styles.label, { color: 'white' }]}>#{index + 1}</Text>
+
+              <View style={styles.tipoContainer}>
+                <TouchableOpacity
+                  style={[styles.tipoButton, item.tipo === 'Geral' && styles.tipoButtonSelected]}
+                  onPress={() => {
+                    const novos = [...reembolsos];
+                    novos[index].tipo = 'Geral';
+                    setReembolsos(novos);
+                  }}
+                >
+                  <Text style={[styles.tipoButtonText, item.tipo === 'Geral' && styles.tipoButtonTextSelected]}>Geral</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[styles.tipoButton, item.tipo === 'Transporte' && styles.tipoButtonSelected]}
+                  onPress={() => {
+                    const novos = [...reembolsos];
+                    novos[index].tipo = 'Transporte';
+                    setReembolsos(novos);
+                  }}
+                >
+                  <Text style={[styles.tipoButtonText, item.tipo === 'Transporte' && styles.tipoButtonTextSelected]}>Transporte</Text>
+                </TouchableOpacity>
+              </View>
+
+              <TextInput
+                style={styles.input}
+                placeholder="Valor (R$)"
+                keyboardType="numeric"
+                value={item.valor}
+                onChangeText={(text) => {
+                  const novos = [...reembolsos];
+                  novos[index].valor = formatCurrency(text);
+                  setReembolsos(novos);
+                }}
+              />
+
+      <TextInput
+    style={styles.input}
+    placeholder="Distância (km)"
+    keyboardType="numeric"
+    value={item.km}
+    onChangeText={(text) => {
+      const novos = [...reembolsos];
+      novos[index].km = text;
+
+      const mediaKmPorLitro = 10; // média do Brasil
+      const precoLitro = 6.0;     // valor do litro
+
+      const distancia = parseFloat(text.replace(',', '.'));
+      if (!isNaN(distancia)) {
+        const litros = distancia / mediaKmPorLitro;
+        const valorCalculado = litros * precoLitro;
+        novos[index].custo_dist = `R$ ${valorCalculado.toFixed(2).replace('.', ',')}`;
+      } else {
+        novos[index].custo_dist = '';
+      }
+
+      setReembolsos(novos);
+    }}
+  />
+  {item.custo_dist !== '' && (
+    <Text style={{ color: 'white', fontSize: 14, marginTop: -10, marginBottom: 10 }}>
+      Custo estimado: {item.custo_dist}
+    </Text>
+  )}
+
+              <TextInput
+                style={styles.input}
+                placeholder="Estabelecimento"
+                value={item.estabelecimento}
+                onChangeText={(text) => {
+                  const novos = [...reembolsos];
+                  novos[index].estabelecimento = text;
+                  setReembolsos(novos);
+                }}
+              />
+
+              {reembolsos.length > 1 && (
+                <TouchableOpacity
+                  style={[styles.sendButton, { backgroundColor: '#FF4444' }]}
+                  onPress={() => handleRemoveReembolso(index)}
+                >
+                  <Text style={styles.sendButtonText}>Remover Despesa</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          ))}
+
+          <TouchableOpacity style={[styles.sendButton, { backgroundColor: '#007AFF' }]} onPress={handleAddReembolso}>
+            <Text style={[styles.sendButtonText, { color: 'white' }]}>+ Adicionar Nova Despesa</Text>
+          </TouchableOpacity>
+
+          <Text style={styles.label}>Anexos:</Text>
+
+          {anexos.length > 0 && (
+            <View style={{ alignItems: 'center', marginBottom: 15 }}>
+              {anexos.map((item, index) => (
+                <View key={index} style={{ marginBottom: 10, alignItems: 'center' }}>
+                  <Image source={{ uri: item.uri }} style={{ width: 200, height: 200, borderRadius: 10 }} />
+                  <TouchableOpacity
+                    onPress={() => removeAnexo(index)}
+                    style={[styles.sendButton, { backgroundColor: '#FF4444', marginTop: 5 }]}
+                  >
+                    <Text style={styles.sendButtonText}>Remover</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          )}
+
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 }}>
+            <TouchableOpacity style={[styles.sendButton, { flex: 1, marginRight: 5 }]} onPress={pickImage}>
+              <Text style={styles.sendButtonText}>Selecionar Imagem</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.tipoButton, form.tipo === 'Transporte' && styles.tipoButtonSelected]}
-              onPress={() => handleChange('tipo', 'Transporte')}
-            >
-              <Text style={[styles.tipoButtonText, form.tipo === 'Transporte' && styles.tipoButtonTextSelected]}>Transporte</Text>
+            <TouchableOpacity style={[styles.sendButton, { flex: 1, marginLeft: 5 }]} onPress={takePhoto}>
+              <Text style={styles.sendButtonText}>Tirar Foto</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Campo Km */}
-          <Text style={styles.label}>Km Rodado (se aplicável):</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite os Km rodados"
-            placeholderTextColor="#ccc"
-            keyboardType="numeric"
-            value={form.km}
-            onChangeText={(text) => handleChange('km', text)}
-          />
-
-          {/* Campo Estabelecimento */}
-          <Text style={styles.label}>Estabelecimento:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite o estabelecimento"
-            placeholderTextColor="#ccc"
-            value={form.estabelecimento}
-            onChangeText={(text) => handleChange('estabelecimento', text)}
-          />
-
-          {/* Campo Descrição */}
-          <Text style={styles.label}>Descrição:</Text>
-          <TextInput
-            style={[styles.input, { height: 80 }]}
-            placeholder="Digite a descrição"
-            placeholderTextColor="#ccc"
-            multiline
-            numberOfLines={4}
-            value={form.descricao}
-            onChangeText={(text) => handleChange('descricao', text)}
-          />
-
-          {/* Botão Adicionar ao Pacote */}
-          <TouchableOpacity style={styles.sendButton} onPress={handleAddToPacote}>
-            <Text style={styles.sendButtonText}>Adicionar ao Pacote</Text>
+          <TouchableOpacity
+            style={[styles.sendButton, { backgroundColor: '#00C851' }]}
+            onPress={handleEnviarPacote}
+          >
+            <Text style={[styles.sendButtonText, { color: 'white' }]}>Enviar</Text>
           </TouchableOpacity>
         </View>
-
-        {/* Lista de Reembolsos */}
-        {reembolsos.length > 0 && (
-          <>
-            <Text style={[styles.label, { marginTop: 20 }]}>Reembolsos:</Text>
-            <FlatList
-              data={reembolsos}
-              renderItem={renderReembolso}
-              keyExtractor={(_, index) => index.toString()}
-              style={{ width: '100%', marginBottom: 15 }}
-            />
-
-            <TouchableOpacity style={[styles.sendButton, { backgroundColor: '#00C851' }]} onPress={handleEnviarPacote}>
-              <Text style={[styles.sendButtonText, { color: 'white' }]}>Enviar</Text>
-            </TouchableOpacity>
-          </>
-        )}
       </ScrollView>
-
-      {/* Botão Câmera */}
-      <TouchableOpacity style={styles.cameraButton}>
-        <Ionicons name="camera" size={32} color="white" />
-      </TouchableOpacity>
 
       <Navtab />
     </SafeAreaView>
@@ -208,14 +295,14 @@ const styles = StyleSheet.create({
   },
   backButton: {
     alignSelf: 'flex-start',
-    marginBottom: 20
+    top: 25
   },
   title: {
     fontSize: 20,
     color: 'white',
     fontWeight: 'bold',
     marginBottom: 20,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   inputContainer: {
     width: '80%',
@@ -234,42 +321,17 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     backgroundColor: '#FFD700',
-    padding: 15,
+    padding: 25,
     borderRadius: 10,
     alignItems: 'center',
     width: '100%',
-    marginTop: 10,
+    marginTop: 5,
+    marginBottom: 15
   },
   sendButtonText: {
     color: '#00245D',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
-  },
-  cameraButton: {
-    display: 'none', // botão ainda oculto
-    position: 'absolute',
-    bottom: 90,
-    backgroundColor: '#FFFFFF',
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  previewItem: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 8,
-  },
-  previewText: {
-    fontSize: 14,
-    color: '#333',
   },
   tipoContainer: {
     flexDirection: 'row',
@@ -294,7 +356,6 @@ const styles = StyleSheet.create({
   tipoButtonTextSelected: {
     fontWeight: 'bold',
   },
-  
 });
 
 export default TelaReembolso;
