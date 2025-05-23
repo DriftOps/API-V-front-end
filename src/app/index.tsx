@@ -67,7 +67,8 @@ export default function Login() {
         backgroundColor: "white",
         borderRadius: 30,
         height: 50,
-        width: 250
+        width: 250,
+        padding: 15
       }}
       value={user}
       onChangeText={(text) => setUser(text)}>
@@ -89,7 +90,8 @@ export default function Login() {
         backgroundColor: "white",
         borderRadius: 30,
         height: 50,
-        width: 250
+        width: 250,
+        padding: 15
       }}
       value={senha}
       onChangeText={(text) =>setSenha(text)}>
