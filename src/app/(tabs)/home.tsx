@@ -21,11 +21,7 @@ export default function Home() {
 
       {/* Total Gasto */}
       <View style={styles.totalContainer}>
-        <Image source={require("../../assets/images/Income.png")} />
-        <Text style={styles.totalText}>Total Gasto</Text>
       </View>
-
-      <Text style={styles.amount}>R$7.783,00</Text>
 
       {/* Card de Opções */}
       <View style={styles.card}>
@@ -74,13 +70,6 @@ const styles = StyleSheet.create({
   totalText: {
     color: "white",
     fontSize: 16,
-  },
-  amount: {
-    color: "white",
-    fontSize: 24,
-    fontWeight: "bold",
-    marginVertical: 10,
-    marginBottom: 35,
   },
   card: {
   backgroundColor: "white",

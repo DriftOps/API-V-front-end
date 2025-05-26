@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Image,
@@ -28,12 +28,30 @@ const TelaReembolso = () => {
   const [projetoSelecionado, setProjetoSelecionado] = useState('');
 
   const [reembolsos, setReembolsos] = useState([
-    { tipo: '', valor: '', km: '', estabelecimento: '', custo_dist: '' },
+    { tipo: '', valor: 0, km: '', estabelecimento: '', custo_dist: '' },
   ]);
+
+  useEffect(() => {
+    buscarProjetos();
+  }, []);
+
+  const buscarProjetos = async () => {
+    try {
+      const response = await fetch('http://192.168.0.104:3000/projects', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const json = await response.json();
+      setProjetos(json.body);
+    } catch (error) {
+      console.error('Erro ao buscar projetos:', error);
+    }
+  };
 
   const showDate = () => setShowDatePicker(true);
 
-  const onChangeDate = (event: any, selectedDate: { toLocaleDateString: (arg0: string) => any; }) => {
+  const onChangeDate = (event, selectedDate) => {
     setShowDatePicker(false);
     if (selectedDate) {
       const formatted = selectedDate.toLocaleDateString('pt-BR');
@@ -66,31 +84,31 @@ const TelaReembolso = () => {
     }
   };
 
-  const removeAnexo = (index: number) => {
+  const removeAnexo = (index) => {
     const novosAnexos = anexos.filter((_, i) => i !== index);
     setAnexos(novosAnexos);
   };
 
-  const getFileName = (uri: string) => {
-    return uri.split('/').pop();
-  };
+  const getFileName = (uri) => uri.split('/').pop();
 
-  const formatCurrency = (text: string) => {
-    const cleaned = text.replace(/\D/g, '');
-    const numericValue = (parseInt(cleaned || '0', 10) / 100).toFixed(2);
-    return numericValue.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  const formatCurrency = (value) => {
+    // Recebe número, retorna string formatada
+    return value
+      .toFixed(2)
+      .replace('.', ',')
+      .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   };
 
   const handleAddReembolso = () => {
-    setReembolsos([...reembolsos, { tipo: '', valor: '', km: '', estabelecimento: '', custo_dist: '' }]);
+    setReembolsos([...reembolsos, { tipo: '', valor: 0, km: '', estabelecimento: '', custo_dist: '' }]);
   };
 
-  const handleRemoveReembolso = (index: number) => {
+  const handleRemoveReembolso = (index) => {
     const novos = reembolsos.filter((_, i) => i !== index);
     setReembolsos(novos);
   };
 
-  const handleKmChange = (text: string, index: number) => {
+  const handleKmChange = (text, index) => {
     const novos = [...reembolsos];
     novos[index].km = text;
 
@@ -101,16 +119,28 @@ const TelaReembolso = () => {
     if (!isNaN(distancia)) {
       const litros = distancia / mediaKmPorLitro;
       const valorCalculado = litros * precoLitro;
-      const valorFormatado = valorCalculado.toFixed(2).replace('.', ',');
 
-      novos[index].custo_dist = `R$ ${valorFormatado}`;
-      novos[index].valor = valorFormatado;
+      novos[index].custo_dist = `R$ ${formatCurrency(valorCalculado)}`;
+      novos[index].valor = valorCalculado;
     } else {
       novos[index].custo_dist = '';
-      novos[index].valor = '';
+      novos[index].valor = 0;
     }
 
     setReembolsos(novos);
+  };
+
+  const handleValorChange = (text, index) => {
+    const novos = [...reembolsos];
+    // Remove tudo que não é número, divide por 100 para manter decimais
+    const cleaned = text.replace(/\D/g, '');
+    const valorNum = parseInt(cleaned || '0', 10) / 100;
+    novos[index].valor = valorNum;
+    setReembolsos(novos);
+  };
+
+  const calcularTotalUtilizado = () => {
+    return reembolsos.reduce((total, r) => total + (r.valor || 0), 0);
   };
 
   const handleEnviarPacote = async () => {
@@ -118,8 +148,9 @@ const TelaReembolso = () => {
       Alert.alert('Erro', 'Selecione a data e adicione ao menos uma despesa.');
       return;
     }
+
     try {
-      const response = await fetch('http://192.168.0.104:3000/refunds', { // TROQUE O LOCALHOST PELO IP DA SUA MÁQUINA!
+      const response = await fetch('http://192.168.0.104:3000/refunds', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -127,8 +158,8 @@ const TelaReembolso = () => {
           projeto_id: projetoSelecionado,
           refunds: reembolsos.map((item) => ({
             data: `${data.split('/')[2]}-${data.split('/')[1].padStart(2, '0')}-${data.split('/')[0].padStart(2, '0')}`,
-            valor: parseFloat(item.valor.replace('.', '').replace(',', '.')),
-            km: parseFloat(item.km) || 0,
+            valor: item.valor,
+            km: parseFloat(item.km.replace(',', '.')) || 0,
             estabelecimento: item.estabelecimento,
             tipo: item.tipo,
             custo_dist: item.custo_dist,
@@ -140,34 +171,15 @@ const TelaReembolso = () => {
       if (!response.ok) throw new Error('Erro ao enviar o pacote');
 
       Alert.alert('Sucesso', 'Reembolsos enviados com sucesso!');
-      setReembolsos([{ tipo: '', valor: '', km: '', estabelecimento: '', custo_dist: '' }]);
+      setReembolsos([{ tipo: '', valor: 0, km: '', estabelecimento: '', custo_dist: '' }]);
       setAnexos([]);
       setData('');
+      setProjetoSelecionado('');
     } catch (error) {
       console.error(error);
       Alert.alert('Erro', 'Não foi possível enviar o pacote.');
     }
   };
-
-  const buscarProjetos = async () => {
-    try {
-      const response = await fetch('http://192.168.0.104:3000/projects', { // TROQUE O LOCALHOST PELO IP DA SUA MÁQUINA!
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      const json = await response.json();
-      setProjetos(json.body);
-    } catch (error) {
-      console.error('Erro ao buscar projetos:', error);
-    }
-  };
-
-  if (projetos.length === 0) {
-    buscarProjetos();
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -208,6 +220,12 @@ const TelaReembolso = () => {
               ))}
             </Picker>
           </View>
+
+          {projetoSelecionado ? (
+            <Text style={styles.projetoInfo}>
+              Utilizado: R$ {calcularTotalUtilizado().toFixed(2)} de R$ {projetos.find(p => p._id === projetoSelecionado)?.limite_reembolso.toFixed(2)}
+            </Text>
+          ) : null}
 
           <Text style={[styles.label, { marginTop: 5 }]}>Despesas:</Text>
 
@@ -252,7 +270,7 @@ const TelaReembolso = () => {
                   onPress={() => {
                     const novos = [...reembolsos];
                     novos[index].tipo = 'Transporte';
-                    novos[index].valor = '';
+                    novos[index].valor = 0;
                     setReembolsos(novos);
                   }}
                 >
@@ -272,12 +290,8 @@ const TelaReembolso = () => {
                   style={styles.input}
                   placeholder="Valor (R$)"
                   keyboardType="numeric"
-                  value={item.valor}
-                  onChangeText={(text) => {
-                    const novos = [...reembolsos];
-                    novos[index].valor = formatCurrency(text);
-                    setReembolsos(novos);
-                  }}
+                  value={item.valor ? formatCurrency(item.valor) : ''}
+                  onChangeText={(text) => handleValorChange(text, index)}
                 />
               )}
 
@@ -399,6 +413,7 @@ const TelaReembolso = () => {
 };
 
 const styles = StyleSheet.create({
+  // mantém seus estilos originais
   container: {
     flex: 1,
     backgroundColor: '#00245D',
@@ -407,64 +422,72 @@ const styles = StyleSheet.create({
   backButton: {
     alignSelf: 'flex-start',
     top: 25,
+    marginBottom: 10,
   },
   title: {
-    fontSize: 20,
-    color: 'white',
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 20,
-    alignSelf: 'center',
+    marginBottom: 15,
+    color: '#FFF',
+    textAlign: 'center',
   },
   inputContainer: {
-    width: '80%',
+    flex: 1,
+    width: '100%',
   },
   label: {
-    color: 'white',
+    fontWeight: 'bold',
     fontSize: 16,
     marginBottom: 5,
+    color: '#FFF',
   },
   input: {
-    backgroundColor: '#EAF5F8',
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 15,
+    backgroundColor: '#fff',
+    borderRadius: 7,
+    height: 40,
+    paddingHorizontal: 10,
     fontSize: 16,
-  },
-  sendButton: {
-    backgroundColor: '#FFD700',
-    padding: 17,
-    borderRadius: 10,
-    alignItems: 'center',
-    width: '100%',
-    marginTop: 1,
-    marginBottom: 15,
-  },
-  sendButtonText: {
-    color: '#00245D',
-    fontSize: 16,
-    fontWeight: 'bold',
+    marginBottom: 10,
+    justifyContent: "center"
   },
   tipoContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 15,
+    justifyContent: 'space-around',
+    marginBottom: 10,
   },
   tipoButton: {
-    flex: 1,
-    backgroundColor: '#EAF5F8',
-    padding: 10,
-    marginHorizontal: 5,
-    borderRadius: 1,
-    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 6,
+    paddingVertical: 5,
+    paddingHorizontal: 15,
   },
   tipoButtonSelected: {
-    backgroundColor: '#FFD700',
+    backgroundColor: '#fff',
   },
   tipoButtonText: {
-    color: '#00245D',
-    fontSize: 16,
+    fontWeight: 'bold',
+    fontSize: 14,
   },
   tipoButtonTextSelected: {
+    color: '#335da1',
+  },
+  projetoInfo: {
+    color: '#eee',
+    fontWeight: 'bold',
+    marginBottom: 10,
+    fontSize: 14,
+  },
+  sendButton: {
+    marginTop: 5,
+    borderRadius: 8,
+    height: 45,
+    backgroundColor: '#335da1',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sendButtonText: {
+    color: 'white',
     fontWeight: 'bold',
   },
 });
