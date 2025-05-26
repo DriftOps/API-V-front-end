@@ -119,7 +119,7 @@ const TelaReembolso = () => {
       return;
     }
     try {
-      const response = await fetch('http://localhost:3000/refunds', { // TROQUE O LOCALHOST PELO IP DA SUA MÁQUINA!
+      const response = await fetch('http://192.168.0.104:3000/refunds', { // TROQUE O LOCALHOST PELO IP DA SUA MÁQUINA!
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -151,7 +151,7 @@ const TelaReembolso = () => {
 
   const buscarProjetos = async () => {
     try {
-      const response = await fetch('http://localhost:3000/projects', { // TROQUE O LOCALHOST PELO IP DA SUA MÁQUINA!
+      const response = await fetch('http://192.168.0.104:3000/projects', { // TROQUE O LOCALHOST PELO IP DA SUA MÁQUINA!
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

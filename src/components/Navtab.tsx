@@ -7,12 +7,12 @@ import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-na
 export default function Navtab() {
   const navigation = useNavigation();
 
-  const scaleNotification = useSharedValue(1);
+  const scaleProject = useSharedValue(1);
   const scaleHome = useSharedValue(1);
   const scaleProfile = useSharedValue(1);
 
   const animatedNotification = useAnimatedStyle(() => ({
-    transform: [{ scale: scaleNotification.value }],
+    transform: [{ scale: scaleProject.value }],
   }));
 
   const animatedHome = useAnimatedStyle(() => ({
@@ -34,8 +34,8 @@ export default function Navtab() {
     <View style={styles.container}>
       {/* Botão Notificações */}
       <Animated.View style={[styles.largeButton]}>
-        <TouchableOpacity onPress={() => handlePress(scaleNotification, 'notificacao')}>
-          <Ionicons name="notifications-outline" size={32} color="#fff" />
+        <TouchableOpacity onPress={() => handlePress(scaleProject, 'projetos')}>
+          <Ionicons name="folder-outline" size={32} color="#fff" />
         </TouchableOpacity>
       </Animated.View>
 
