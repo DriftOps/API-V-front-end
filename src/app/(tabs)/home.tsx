@@ -30,22 +30,21 @@ export default function Home() {
       {/* Card de Opções */}
       <View style={styles.card}>
       <TouchableOpacity 
-        style={styles.option}
-        onPress={() => router.replace("/(tabs)/reembolso")}
-      >
-        <Image source={require("../../assets/images/add.png")} style={styles.optionIcon} />
-        <Text style={styles.optionText}>Solicitar reembolso</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity 
-        style={styles.option}
-        onPress={() => router.replace("/(tabs)/historico")}
-      >
-        <Image source={require("../../assets/images/saving.png")} style={styles.optionIcon} />
-        <Text style={styles.optionText}>Histórico</Text>
-      </TouchableOpacity>
-      </View>
-      <Navtab />
+      style={styles.option}
+      onPress={() => router.replace("/(tabs)/reembolso")}
+    >
+      <Ionicons name="add-circle-outline" size={90} color="#002963" />
+      <Text style={styles.optionText}>Solicitar reembolso</Text>
+    </TouchableOpacity>
+    <TouchableOpacity 
+      style={styles.option}
+      onPress={() => router.replace("/(tabs)/historico")}
+    >
+      <Ionicons name="wallet-outline" size={90} color="#002963" />
+      <Text style={styles.optionText}>Histórico</Text>
+    </TouchableOpacity>
+    </View>
+    <Navtab />
     </View>
   );
 }
@@ -69,7 +68,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 7,
-    marginBottom: 10,
+    fontWeight: "bold",
     marginTop: 40
   },
   totalText: {
@@ -84,27 +83,27 @@ const styles = StyleSheet.create({
     marginBottom: 35,
   },
   card: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    width: "60%",
-    height: "45%",
-  },
+  backgroundColor: "white",
+  padding: 10,
+  borderRadius: 30,
+  alignItems: "center",
+  justifyContent: "center",
+  width: "50%",
+  marginVertical: 30,
+},
   option: {
     alignItems: "center",
-    marginVertical: 10,
+    marginVertical: 15,
   },
   optionIcon: {
     width: 90,
     height: 90,
   },
   optionText: {
-    color: "#002963",
-    fontSize: 16,
-    fontWeight: "bold",
-    marginTop: 5,
-  },
+  color: "#002963",
+  fontSize: 18,
+  fontWeight: "bold",
+  marginTop: 2,
+},
 
 });

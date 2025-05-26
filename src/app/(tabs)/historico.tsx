@@ -109,7 +109,10 @@ const TelaHistorico = () => {
       <FlatList
         data={packages}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 15 }}
+        contentContainerStyle={{ 
+          padding: 15, 
+          paddingBottom: 120 // espaço para a Navtab
+        }}
         renderItem={({ item }) => (
           <View style={styles.packageCard}>
             {/* Nome editável */}
@@ -166,7 +169,7 @@ const getStatusStyle = (status: string) => {
     case 'Reprovado':
       return { color: 'red' };
     case 'Pendente':
-      return { color: 'grey' };
+      return { color: 'orange' };
     default:
       return { color: 'gray' };
   }

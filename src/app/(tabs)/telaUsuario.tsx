@@ -56,15 +56,15 @@ const openImagePickerOptions = () => {
   if (selectedImage) {
     buttons.push({
       text: "Remover Foto",
-      onPress: () => setSelectedImage(null),
-      style: "destructive",
+      onPress: async () => setSelectedImage(null),
+      style: "destructive" as const,
     });
   }
 
 
   buttons.push({
     text: "Cancelar",
-    style: "cancel",
+    style: "cancel" as const,
   });
 
   Alert.alert(
