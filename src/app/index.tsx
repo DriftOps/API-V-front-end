@@ -11,33 +11,34 @@ export default function Login() {
   const [senha, setSenha] = useState("");
 
   const handleLogin = async () => {
-    if (!user || !senha) {
-      alert("Preencha todos os campos");
-      return;
+  if (!user || !senha) {
+    alert("Preencha todos os campos");
+    return;
+  }
+
+  try {
+    const response = await fetch('http://10.0.2.2:3000/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ user, password: senha }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      await AsyncStorage.setItem('token', data.body.token);
+      router.replace("/(tabs)/home");
+    } else {
+      alert(data.body.text || "Erro ao fazer login");
     }
-  
-    try {
-      const response = await fetch('http://10.0.2.2:5000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ user, password: senha }),
-      });
-  
-      const data = await response.json();
-  
-      if (response.ok) {
-        await AsyncStorage.setItem('token', data.body.token);
-        router.replace("/(tabs)/home");
-      } else {
-        alert(data.body.text || "Erro ao fazer login");
-      }
-    } catch (error) {
-      console.error("Erro no login:", error);
-      alert("Erro ao tentar fazer login. Tente novamente.");
-    }
-  };
+  } catch (error) {
+    console.error("Erro no login:", error);
+    alert("Erro ao tentar fazer login. Tente novamente.");
+  }
+};
+
   
 
   return (
@@ -45,8 +46,10 @@ export default function Login() {
       style={{
         backgroundColor: "#002963",
         flex: 2,
-        justifyContent: "space-evenly",
-        alignItems: "center"
+        justifyContent: "flex-start",  // ou "center"
+        alignItems: "center",
+        paddingTop: 120, 
+        gap: 40          
       }}
     >
 
@@ -100,7 +103,7 @@ export default function Login() {
       </View>
 
       <TouchableOpacity
-      onPress={() => router.replace("/(tabs)/home")}
+      onPress={handleLogin}
           style={{
             backgroundColor: "white",
             borderRadius: 30,
@@ -108,6 +111,7 @@ export default function Login() {
             width: 250, 
             justifyContent: "center",
             alignItems: "center", 
+            marginTop: 40,
           }}
         >
           <Text
@@ -115,8 +119,7 @@ export default function Login() {
               color: "black", 
               fontSize: 18, 
               fontWeight: "bold", 
-            }}
-          >
+            }}>
             Efetuar Login
           </Text>
         </TouchableOpacity>

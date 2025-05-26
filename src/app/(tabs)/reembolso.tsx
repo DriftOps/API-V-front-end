@@ -33,7 +33,7 @@ const TelaReembolso = () => {
 
   const showDate = () => setShowDatePicker(true);
 
-  const onChangeDate = (event, selectedDate) => {
+  const onChangeDate = (event: any, selectedDate: { toLocaleDateString: (arg0: string) => any; }) => {
     setShowDatePicker(false);
     if (selectedDate) {
       const formatted = selectedDate.toLocaleDateString('pt-BR');
@@ -66,16 +66,16 @@ const TelaReembolso = () => {
     }
   };
 
-  const removeAnexo = (index) => {
+  const removeAnexo = (index: number) => {
     const novosAnexos = anexos.filter((_, i) => i !== index);
     setAnexos(novosAnexos);
   };
 
-  const getFileName = (uri) => {
+  const getFileName = (uri: string) => {
     return uri.split('/').pop();
   };
 
-  const formatCurrency = (text) => {
+  const formatCurrency = (text: string) => {
     const cleaned = text.replace(/\D/g, '');
     const numericValue = (parseInt(cleaned || '0', 10) / 100).toFixed(2);
     return numericValue.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -85,12 +85,12 @@ const TelaReembolso = () => {
     setReembolsos([...reembolsos, { tipo: '', valor: '', km: '', estabelecimento: '', custo_dist: '' }]);
   };
 
-  const handleRemoveReembolso = (index) => {
+  const handleRemoveReembolso = (index: number) => {
     const novos = reembolsos.filter((_, i) => i !== index);
     setReembolsos(novos);
   };
 
-  const handleKmChange = (text, index) => {
+  const handleKmChange = (text: string, index: number) => {
     const novos = [...reembolsos];
     novos[index].km = text;
 
@@ -209,7 +209,7 @@ const TelaReembolso = () => {
             </Picker>
           </View>
 
-          <Text style={[styles.label, { marginTop: 20 }]}>Despesas:</Text>
+          <Text style={[styles.label, { marginTop: 5 }]}>Despesas:</Text>
 
           {reembolsos.map((item, index) => (
             <View
@@ -432,11 +432,11 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     backgroundColor: '#FFD700',
-    padding: 25,
+    padding: 17,
     borderRadius: 10,
     alignItems: 'center',
     width: '100%',
-    marginTop: 5,
+    marginTop: 1,
     marginBottom: 15,
   },
   sendButtonText: {
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#EAF5F8',
     padding: 10,
     marginHorizontal: 5,
-    borderRadius: 10,
+    borderRadius: 1,
     alignItems: 'center',
   },
   tipoButtonSelected: {

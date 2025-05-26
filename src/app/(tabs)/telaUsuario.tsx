@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from 'expo-image-picker';
@@ -6,6 +6,38 @@ import Navtab from '@/components/Navtab';
 import { router } from "expo-router";
 
 const TelaPerfil = () => {
+
+  const [userData, setUserData] = useState<{
+    user: string;
+    dataRegistro: string;
+    reembolso: number;
+  } | null>(null);
+
+   useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch("http://10.0.2.2:3000/users");
+        const json = await response.json();
+
+        if (json.body && json.body.length > 0) {
+          const user = json.body[0];
+
+          setUserData({
+            user: user.user,
+            dataRegistro: user.dataRegistro,
+            reembolso: user.reembolso,
+          });
+        } else {
+          console.warn("Nenhum usuário encontrado.");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const pickImage = async () => {
@@ -109,12 +141,18 @@ const openImagePickerOptions = () => {
 
         <Text style={styles.label}>Nome:</Text>
         <View style={styles.infoBox}>
-          <Text style={styles.infoText}>Luiz Henrique</Text>
+          <Text style={styles.infoText}>
+            {userData?.user ?? "Carregando..."}
+          </Text>
         </View>
 
         <Text style={styles.label}>Data Registro:</Text>
         <View style={styles.infoBox}>
-          <Text style={styles.infoText}>04/04/2025</Text>
+          <Text style={styles.infoText}>
+            {userData?.dataRegistro
+              ? new Date(userData.dataRegistro).toLocaleDateString("pt-BR")
+              : "Carregando..."}
+          </Text>
         </View>
 
         <Text style={styles.reembolsoLabel}>Valor Reembolsado:</Text>
