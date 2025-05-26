@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 7,
     fontWeight: "bold",
-    marginTop: 40
+    marginTop: 20
   },
   totalText: {
     color: "white",
