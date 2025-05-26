@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
+import { Picker } from '@react-native-picker/picker';
 import Navtab from '@/components/Navtab';
 
 const TelaReembolso = () => {
@@ -24,6 +25,8 @@ const TelaReembolso = () => {
   const [data, setData] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [anexos, setAnexos] = useState([]);
+  const [projetos, setProjetos] = useState([]);
+  const [projetoSelecionado, setProjetoSelecionado] = useState('');
 
   const [reembolsos, setReembolsos] = useState([
     { tipo: '', valor: '', km: '', estabelecimento: '' },
@@ -69,6 +72,10 @@ const TelaReembolso = () => {
     setAnexos(novosAnexos);
   };
 
+  const getFileName = (uri) => {
+    return uri.split('/').pop();
+  };
+
   const formatCurrency = (text) => {
     const cleaned = text.replace(/\D/g, '');
     const numericValue = (parseInt(cleaned || '0', 10) / 100).toFixed(2);
@@ -89,20 +96,20 @@ const TelaReembolso = () => {
       Alert.alert('Erro', 'Selecione a data e adicione ao menos uma despesa.');
       return;
     }
-
     try {
-      const response = await fetch('http://192.168.184.222:3000/refunds', {
+      const response = await fetch('localhost:3000/refunds', { // TROQUE LOCALHOST PELO IP DA SUA MÁQUINA
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           usuario_id: '662adf6e457a4d8375c4e4b1',
+          projeto_id: projetoSelecionado,
           refunds: reembolsos.map((item) => ({
             data: `${data.split('/')[2]}-${data.split('/')[1].padStart(2, '0')}-${data.split('/')[0].padStart(2, '0')}`,
             valor: parseFloat(item.valor.replace('.', '').replace(',', '.')),
             km: parseFloat(item.km),
             estabelecimento: item.estabelecimento,
             tipo: item.tipo,
-            imagens: anexos.map((anexo) => `data:${anexo.type || 'image/jpeg'};base64,${anexo.base64}`),
+            imagens: anexos.map((anexo) => getFileName(anexo.uri))
           })),
         }),
       });
@@ -118,6 +125,27 @@ const TelaReembolso = () => {
       Alert.alert('Erro', 'Não foi possível enviar o pacote.');
     }
   };
+
+  const buscarProjetos = async () => {
+    try {
+      const response = await fetch('http:/localhost:3000/projects', { // TROQUE LOCALHOST PELO IP DA SUA MÁQUINA
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      const json = await response.json();
+      setProjetos(json.body);
+    } catch (error) {
+      console.error('Erro ao buscar projetos:', error);
+    }
+  };
+  
+
+  if (projetos.length === 0) {
+    buscarProjetos();
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -147,6 +175,19 @@ const TelaReembolso = () => {
               locale="pt-BR"
             />
           )}
+
+        <Text style={styles.label}>Projeto:</Text>
+        <View style={styles.input}>
+          <Picker
+            selectedValue={projetoSelecionado}
+            onValueChange={(itemValue) => setProjetoSelecionado(itemValue)}
+          >
+            <Picker.Item label="Selecione um projeto" value="" />
+            {projetos.map((proj) => (
+              <Picker.Item key={proj._id} label={proj.nome} value={proj._id} />
+            ))}
+          </Picker>
+        </View>
 
           <Text style={[styles.label, { marginTop: 20 }]}>Despesas:</Text>
 
