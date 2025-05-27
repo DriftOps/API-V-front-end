@@ -24,12 +24,12 @@ const TelaProjetos = () => {
   const [limite, setLimite] = useState('');
   const [usuariosSelecionados, setUsuariosSelecionados] = useState([]);
 
-  const usuarioAtualId = '662adf6e457a4d8375c4e4b1'; // Coloque o ID do usuário atual
+  const usuarioAtualId = '662adf6e457a4d8375c4e4b1'; // Substitua pelo ID real do usuário
 
-  // Buscar usuários
+  // Funções para buscar dados
   const buscarUsuarios = async () => {
     try {
-      const response = await fetch('http://192.168.0.104:3000/users');
+      const response = await fetch('http://172.27.208.1:3000/users');
       const data = await response.json();
       setUsuarios(data.body);
     } catch (error) {
@@ -37,10 +37,9 @@ const TelaProjetos = () => {
     }
   };
 
-  // Buscar projetos
   const buscarProjetos = async () => {
     try {
-      const response = await fetch('http://192.168.0.104:3000/projects');
+      const response = await fetch('http://172.27.208.1:3000/projects');
       const data = await response.json();
       setProjetos(data.body);
     } catch (error) {
@@ -48,10 +47,9 @@ const TelaProjetos = () => {
     }
   };
 
-  // Buscar reembolsos
   const buscarReembolsos = async () => {
     try {
-      const response = await fetch('http://192.168.0.104:3000/refunds');
+      const response = await fetch('http://172.27.208.1:3000/refunds');
       const data = await response.json();
       setReembolsos(data.body);
     } catch (error) {
@@ -67,7 +65,7 @@ const TelaProjetos = () => {
     }
 
     try {
-      const response = await fetch('http://192.168.0.104:3000/projects', {
+      const response = await fetch('http://localhost:3000/projects', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -91,7 +89,7 @@ const TelaProjetos = () => {
     }
   };
 
-  // Calcular total utilizado no projeto
+  // Calcular total utilizado
   const calcularTotalUtilizado = (projetoId) => {
     const utilizados = reembolsos
       .filter((r) => r.projeto === projetoId)
@@ -119,7 +117,7 @@ const TelaProjetos = () => {
 
         <Text style={styles.title}>Projetos</Text>
 
-        {/* Formulário de criação */}
+        {/* Formulário */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Nome do Projeto:</Text>
           <TextInput
@@ -208,8 +206,19 @@ const TelaProjetos = () => {
               </Text>
 
               <View style={styles.progressBar}>
-                <View style={[styles.progressFill, { width: `${percentual}%` }]} />
+                <View
+                  style={[
+                    styles.progressFill,
+                    {
+                      width: `${percentual}%`,
+                      backgroundColor: percentual < 80 ? '#FFD700' : 'red',
+                    },
+                  ]}
+                />
               </View>
+              <Text style={styles.projetoInfo}>
+                {percentual.toFixed(0)}% do limite utilizado
+              </Text>
             </View>
           );
         })}
@@ -222,6 +231,7 @@ const TelaProjetos = () => {
 
 export default TelaProjetos;
 
+// Estilos
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -303,6 +313,6 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#FFD700',
+    borderRadius: 6,
   },
 });

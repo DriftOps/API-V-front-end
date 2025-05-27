@@ -1,97 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import Navtab from '@/components/Navtab';
 
-const initialPackages = [
-  {
-    id: '1',
-    name: 'Projeto A',
-    status: 'Pendente',
-    date: '30 de Abril - 18:27',
-    kilometers: 20,
-    expenses: [
-      { id: '1', category: 'Geral', amount: 52.00 },
-      { id: '2', category: 'Transporte', amount: 65.00 }
-    ]
-  },
-  {
-    id: '2',
-    name: 'Projeto B',
-    status: 'Aprovado',
-    date: '15 de Abril - 18:00',
-    kilometers: 50,
-    expenses: [
-      { id: '3', category: 'Geral', amount: 25.00 },
-      { id: '4', category: 'Transporte', amount: 46.00 }
-    ]
-  },
-  {
-    id: '3',
-    name: 'Projeto X',
-    status: 'Reprovado',
-    date: '10 de Abril - 14:30',
-    kilometers: 35,
-    expenses: [
-      { id: '5', category: 'Geral', amount: 30.00 },
-      { id: '6', category: 'Transporte', amount: 40.00 }
-    ]
-  },
-  {
-    id: '4',
-    name: 'Projeto Y',
-    status: 'Aprovado',
-    date: '12 de Abril - 09:15',
-    kilometers: 75,
-    expenses: [
-      { id: '7', category: 'Geral', amount: 20.00 },
-      { id: '8', category: 'Transporte', amount: 60.00 }
-    ]
-  },
-  {
-    id: '5',
-    name: 'Projeto 123',
-    status: 'Pendente',
-    date: '20 de Abril - 16:00',
-    kilometers: 120,
-    expenses: [
-      { id: '9', category: 'Geral', amount: 35.00 },
-      { id: '10', category: 'Transporte', amount: 80.00 }
-    ]
-  },
-  {
-    id: '6',
-    name: 'Projeto 456',
-    status: 'Reprovado',
-    date: '18 de Abril - 13:45',
-    kilometers: 90,
-    expenses: [
-      { id: '11', category: 'Geral', amount: 50.00 },
-      { id: '12', category: 'Transporte', amount: 90.00 }
-    ]
-  },
-  {
-    id: '7',
-    name: 'Projeto 3',
-    status: 'Aprovado',
-    date: '5 de Abril - 08:00',
-    kilometers: 60,
-    expenses: [
-      { id: '13', category: 'Geral', amount: 40.00 },
-      { id: '14', category: 'Transporte', amount: 70.00 }
-    ]
-  },
-];
-
 const TelaHistorico = () => {
   const navigation = useNavigation();
-  const [packages, setPackages] = useState(initialPackages);
+  const [packages, setPackages] = useState<any[]>([]);
   const [expandedPackage, setExpandedPackage] = useState<string | null>(null);
 
   const toggleExpand = (packageId: string) => {
     setExpandedPackage(expandedPackage === packageId ? null : packageId);
   };
+
+  const buscarReembolsos = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/refunds');
+      const data = await response.json();
+
+      const mappedData = data.body.map((item: any) => ({
+        id: item._id,
+        name: item.projeto_nome,
+        status: item.status,
+        date: formatDate(item.data),
+        kilometers: item.refunds.reduce((acc: number, cur: any) => acc + (cur.km || 0), 0),
+        expenses: item.refunds.map((r: any, index: number) => ({
+          id: `${item._id}-${index}`,
+          category: r.tipo,
+          amount: r.valor,
+        })),
+      }));
+
+      setPackages(mappedData);
+    } catch (error) {
+      console.error('Erro ao buscar reembolsos:', error);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth()+1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+  };
+
+  useEffect(() => {
+    buscarReembolsos();
+  }, []);
 
   return (
     <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
@@ -109,45 +62,41 @@ const TelaHistorico = () => {
       <FlatList
         data={packages}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ 
-          padding: 15, 
-          paddingBottom: 120 // espaço para a Navtab
+        contentContainerStyle={{
+          padding: 15,
+          paddingBottom: 120
         }}
         renderItem={({ item }) => (
           <View style={styles.packageCard}>
-            {/* Nome editável */}
             <TextInput
               style={styles.packageName}
               value={item.name}
+              editable={false}
             />
 
-            {/* Status e Data */}
             <View style={styles.statusRow}>
               <Text style={[styles.status, getStatusStyle(item.status)]}>{item.status}</Text>
               <Text style={styles.date}>{item.date}</Text>
             </View>
 
-            {/* Quilometragem */}
             <Text style={{ color: 'gray', marginBottom: 5 }}>{item.kilometers} km</Text>
 
-            {/* Botão Ver Detalhes */}
             <TouchableOpacity onPress={() => toggleExpand(item.id)}>
               <Text style={{ color: '#007AFF', marginBottom: 10 }}>
                 {expandedPackage === item.id ? 'Ocultar detalhes' : 'Ver detalhes'}
               </Text>
             </TouchableOpacity>
 
-            {/* Lista de despesas */}
             {expandedPackage === item.id && (
               <View>
-                {item.expenses.map(expense => (
+                {item.expenses.map((expense: any) => (
                   <View key={expense.id} style={styles.expenseItem}>
                     <Text style={{ flex: 1 }}>{expense.category}</Text>
                     <TextInput
                       style={styles.amountInput}
                       keyboardType="numeric"
                       value={expense.amount.toFixed(2)}
-                      editable={false} // Torna o campo de valor não editável
+                      editable={false}
                     />
                   </View>
                 ))}
