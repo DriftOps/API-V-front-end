@@ -12,7 +12,7 @@ export default function Cadastro() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://10.0.2.2:5000/api/auth/login', {  // No PC, use localhost:5000, no emulador, 10.0.2.2:5000
+      const response = await fetch('http://localhost:5000/api/auth/login', {  // No PC, use localhost:5000, no emulador, 10.0.2.2:5000
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

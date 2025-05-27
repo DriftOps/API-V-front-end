@@ -19,11 +19,11 @@ const TelaPerfil = () => {
    useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch("http://10.0.2.2:3000/users");
+        const response = await fetch("http://localhost:3000/users");
         const json = await response.json();
 
         if (json.body && json.body.length > 0) {
-          const user = json.body[1];
+          const user = json.body[0];
 
           setUserData({
             user: user.user || "Desconhecido",
